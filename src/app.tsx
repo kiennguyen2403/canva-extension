@@ -6,7 +6,7 @@ import * as React from "react";
 import styles from "styles/components.css";
 
 export const App = () => {
-  const tasks = useQuery(api.tasks.get);
+
   const onClick = async () => {
     try {
       await addNativeElement({
@@ -21,9 +21,6 @@ export const App = () => {
   return (
     <div className={styles.scrollContainer}>
       <Rows spacing="2u">
-        {tasks?.map(({ _id, text }) => (
-          <Text key={_id}>{text}</Text>
-        ))}
         {/* <Text>
           To make changes to this app, edit the <code>src/app.tsx</code> file,
           then close and reopen the app in the editor to preview the changes.
