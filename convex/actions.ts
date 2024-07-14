@@ -12,9 +12,8 @@ export const generateSuggestions = action({
     },
     handler: async (ctx, { designs }) => {
         const suggestions: Suggestion[] = [];
-        const fontValidation = await ctx.runAction(internal.font.fontValidation, { font: ["Arial"] });
         const paletteValidation = await ctx.runAction(internal.palettes.validatePalette, { palette: ["#000000", "#FFFFFF"] });
-        const response = await fetch("");
+        const modelValidation = await fetch("");
         return suggestions;
     },
 });

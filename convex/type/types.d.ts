@@ -16,4 +16,12 @@ export interface Suggestion {
     title: string;
     type: string;
     content: string;
+    extra?: any;
+}
+
+
+export interface Image {
+    url: string;
+    width: number;
+    height: number;
 }

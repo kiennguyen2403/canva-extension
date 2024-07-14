@@ -23,4 +23,10 @@ export default defineSchema({
     palettes: defineTable({
         colors: v.array(v.string()),
     }),
+    fontRules: defineTable({
+        family: v.string(),
+        weight: v.string(),
+        style: v.string(),
+        size: v.number(),
+    }),
 });
