@@ -19,7 +19,6 @@ export interface Suggestion {
     extra?: any;
 }
 
-
 export interface Image {
     url: string;
     width: number;

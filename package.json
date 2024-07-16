@@ -30,6 +30,7 @@
     "@canva/platform": "^1.1.0",
     "@canva/preview": "./sdk/preview",
     "@canva/user": "^1.0.0",
+    "axios": "^1.7.2",
     "convex": "^1.12.2",
     "react": "^18.1.0",
     "react-dom": "^18.1.0"

@@ -15,7 +15,9 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as actions from "../actions.js";
+import type * as content from "../content.js";
 import type * as font from "../font.js";
+import type * as images from "../images.js";
 import type * as palettes from "../palettes.js";
 
 /**
@@ -28,7 +30,9 @@ import type * as palettes from "../palettes.js";
  */
 declare const fullApi: ApiFromModules<{
   actions: typeof actions;
+  content: typeof content;
   font: typeof font;
+  images: typeof images;
   palettes: typeof palettes;
 }>;
 export declare const api: FilterApi<

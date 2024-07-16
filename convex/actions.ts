@@ -14,6 +14,7 @@ export const generateSuggestions = action({
         const suggestions: Suggestion[] = [];
         const paletteValidation = await ctx.runAction(internal.palettes.validatePalette, { palette: ["#000000", "#FFFFFF"] });
         const modelValidation = await fetch("");
+    
         return suggestions;
     },
 });
