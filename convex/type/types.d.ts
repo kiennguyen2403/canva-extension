@@ -1,26 +1,26 @@
 export interface Component {
-    name: string;
-    props: { [key: string]: any };
+  name: string;
+  props: { [key: string]: any };
 }
 
 export interface Palette {
-    colors: string[];
+  colors: string[];
 }
 
 export interface Design {
-    name: string;
-    components: Component[];   
+  name: string;
+  components: Component[];
 }
 
 export interface Suggestion {
-    title: string;
-    type: string;
-    content: string;
-    extra?: any;
+  title: string;
+  type: string;
+  content: string;
+  extra?: any;
 }
 
 export interface Image {
-    url: string;
-    width: number;
-    height: number;
+  url: string;
+  width: number;
+  height: number;
 }
