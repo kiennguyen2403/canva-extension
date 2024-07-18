@@ -1,2 +1,3 @@
 const dataProvider = window.canva.dataProvider;
-export const onSelectDataTable = dataProvider.onSelectDataTable.bind(dataProvider);
+export const onSelectDataTable =
+  dataProvider.onSelectDataTable.bind(dataProvider);

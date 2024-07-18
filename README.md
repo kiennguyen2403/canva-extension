@@ -66,7 +66,7 @@ To enable HMR:
 5. Set the `CANVA_APP_ORIGIN` environment variable to the value copied from the **App origin** field:
 
    ```bash
-   CANVA_APP_ORIGIN=# YOUR APP ORIGIN GOES HERE 
+   CANVA_APP_ORIGIN=# YOUR APP ORIGIN GOES HERE
    ```
 
 6. Set the `CANVA_HMR_ENABLED` environment variable to `true`:
@@ -81,33 +81,34 @@ To enable HMR:
 <details>
   <summary>Previewing apps in Safari</summary>
 
-  By default, the development server is not HTTPS-enabled. This is convenient, as there's no need for a security certificate, but it prevents apps from being previewed in Safari.
+By default, the development server is not HTTPS-enabled. This is convenient, as there's no need for a security certificate, but it prevents apps from being previewed in Safari.
 
-  **Why Safari requires the development server to be HTTPS-enabled?**
+**Why Safari requires the development server to be HTTPS-enabled?**
 
-  Canva itself is served via HTTPS and most browsers prevent HTTPS pages from loading scripts via non-HTTPS connections. Chrome and Firefox make exceptions for local servers, such as `localhost`, but Safari does not, so if you're using Safari, the development server must be HTTPS-enabled.
+Canva itself is served via HTTPS and most browsers prevent HTTPS pages from loading scripts via non-HTTPS connections. Chrome and Firefox make exceptions for local servers, such as `localhost`, but Safari does not, so if you're using Safari, the development server must be HTTPS-enabled.
 
-  To learn more, see [Loading mixed-content resources](https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_mixed-content_resources).
+To learn more, see [Loading mixed-content resources](https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#loading_mixed-content_resources).
 
-  To preview apps in Safari:
+To preview apps in Safari:
 
-  1. Start the development server with HTTPS enabled:
+1. Start the development server with HTTPS enabled:
 
-  ```bash
-  # Run the main app
-  npm start --use-https
+```bash
+# Run the main app
+npm start --use-https
 
-  # Run an example
-  npm start <example-name> --use-https
-  ```
+# Run an example
+npm start <example-name> --use-https
+```
 
-  2. Navigate to <https://localhost:8080>.
-  3. Bypass the invalid security certificate warning:
-    1. Click **Show details**.
-    2. Click **Visit website**.
-  4. In the Developer Portal, set the app's **Development URL** to <https://localhost:8080>.
+2. Navigate to <https://localhost:8080>.
+3. Bypass the invalid security certificate warning:
+4. Click **Show details**.
+5. Click **Visit website**.
+6. In the Developer Portal, set the app's **Development URL** to <https://localhost:8080>.
 
-  You need to bypass the invalid security certificate warning every time you start the local server. A similar warning will appear in other browsers (and will need to be bypassed) whenever HTTPS is enabled.
+You need to bypass the invalid security certificate warning every time you start the local server. A similar warning will appear in other browsers (and will need to be bypassed) whenever HTTPS is enabled.
+
 </details>
 
 ## Running an example's backend

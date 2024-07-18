@@ -3,6 +3,7 @@ const path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
 const { DefinePlugin, optimize } = require("webpack");
 const chalk = require("chalk");
+const Dotenv = require("dotenv-webpack");
 
 /**
  *
@@ -163,6 +164,7 @@ function buildConfig({
       }),
       // Apps can only submit a single JS file via the developer portal
       new optimize.LimitChunkCountPlugin({ maxChunks: 1 }),
+      new Dotenv(),
     ],
     ...buildDevConfig(devConfig),
   };
@@ -185,7 +187,8 @@ function buildDevConfig(options) {
     return null;
   }
 
-  const { port, enableHmr, appOrigin, appId, enableHttps, certFile, keyFile } = options;
+  const { port, enableHmr, appOrigin, appId, enableHttps, certFile, keyFile } =
+    options;
 
   let devServer = {
     server: enableHttps
