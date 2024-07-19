@@ -6,8 +6,22 @@ import * as React from "react";
 import styles from "styles/components.css";
 import { useSelection } from "utils/use_selection_hook";
 import { initAppElement } from "@canva/design";
-import { selection } from "@canva/design";
+import { AppLayout } from "./ui-components/AppLayout";
+import { AppScreen } from "./ui-components/AppScreen";
 
+export const App = () => {
+  return (
+    <AppLayout>
+      <AppScreen />
+    </AppLayout>
+  );
+};
+
+/**
+ * This part is for testing purposes
+ * TODO: Delete this and TestApp comments in index when app is released
+ *
+ */
 type AppElementData = {
   color1: string;
   color2: string;
@@ -29,7 +43,7 @@ const appElementClient = initAppElement<AppElementData>({
   },
 });
 
-export const App = () => {
+export const TestApp = () => {
   const tasks = useQuery(api.tasks.get);
   const onAddText = async () => {
     try {
