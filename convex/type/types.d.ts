@@ -24,3 +24,18 @@ export interface Image {
   width: number;
   height: number;
 }
+
+export interface Prediction {
+  confidence: number;
+  class_id: number;
+}
+
+export interface ImageModelResponse {
+  time: number;
+  image: {
+    width: number;
+    height: number;
+  };
+  predictions: Prediction[];
+  predicted_classes: string[];
+}
