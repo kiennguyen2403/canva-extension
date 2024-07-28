@@ -1,12 +1,12 @@
 import { CheckIcon, Pill, Rows, Box, Text, Columns, Avatar, Column } from "@canva/app-ui-kit";
 import React, { useEffect, useState } from "react";
-import { SuggestionText } from "src/types/Suggestion";
+import { SuggestionType, type Suggestion } from "src/types/Suggestion";
 
-export const SuggestionTabText = ({
+export const SuggestionTab = ({
   data,
   action,
 }: {
-  data: SuggestionText[];
+  data: Suggestion[];
   action: ({
     id,
     original,
@@ -18,17 +18,20 @@ export const SuggestionTabText = ({
   }) => Promise<void>;
 }) => {
   const [selectableData, setSelectedData] = useState<
-    (SuggestionText & { selected: boolean })[] | undefined
-  >(undefined);
+    (Suggestion & { id: number; selected: boolean })[]
+  >([]);
 
   useEffect(() => {
     setSelectedData(
-      data.map((suggestion) => {
-        return {
-          ...suggestion,
-          selected: false,
-        };
-      })
+      data
+        .map((suggestion, id) => {
+          return {
+            ...suggestion,
+            id,
+            selected: false,
+          };
+        })
+        .filter(({ type }) => type !== SuggestionType.NoSuggestion)
     );
   }, [data]);
 
@@ -41,19 +44,23 @@ export const SuggestionTabText = ({
           </Box>
         </Column>
         <Column>
-          <Avatar name={data.length.toString()} backgroundColor="#34BA96" />
+          <Avatar name={selectableData.length.toString()} backgroundColor="#34BA96" />
         </Column>
       </Columns>
       {selectableData &&
-        selectableData.map(({ selected, suggestion, suggested, original }, id) => {
+        selectableData.map(({ selected, suggestion, suggested, original, id }, index) => {
           return (
             <Pill
               onClick={() => {
                 const newSelectedData = [...selectableData];
-                newSelectedData[id].selected = !selected;
+                newSelectedData[index].selected = !selected;
                 setSelectedData(newSelectedData);
                 if (suggested && original) {
-                  action({ id, suggested, original });
+                  action({
+                    id,
+                    suggested: suggested.rawFullText,
+                    original: original.rawFullText,
+                  });
                 }
               }}
               text={suggestion}

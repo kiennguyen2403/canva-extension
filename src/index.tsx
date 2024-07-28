@@ -16,7 +16,6 @@ function render() {
     <ConvexProvider client={convex}>
       <AppUiProvider>
         <App />
-        {/* <TestApp /> */}
       </AppUiProvider>
     </ConvexProvider>
   );

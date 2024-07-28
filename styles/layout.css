@@ -1,0 +1,9 @@
+.nativeLink {
+    color: #8a2be2;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.nativeLink:hover {
+    color: #3d10ef;
+}

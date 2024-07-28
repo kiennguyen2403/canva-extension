@@ -1,25 +1,22 @@
+import type { TextAnalysisData } from "./AnalysisData";
+
 export interface Suggestion {
-  text: SuggestionText[];
-  media: SuggestionMedia[];
-  color: SuggestionColor;
-}
-
-export interface SuggestionText {
   suggestion: string;
-  suggested?: string;
-  original?: string;
+  suggested?: TextAnalysisData;
+  original?: TextAnalysisData;
+  type: SuggestionType;
+  errors: string[];
 }
 
-export interface SuggestionMedia {
-  url: string;
-  description?: string;
+export interface DataExport {
+  score: number;
+  suggestions: Suggestion[];
 }
 
-export interface SuggestionColor {
-  current: PalleteColor[];
-  suggested: PalleteColor[];
-}
-
-export interface PalleteColor {
-  color: string;
+export enum SuggestionType {
+  General,
+  Grammar,
+  TextStyle,
+  Palette,
+  NoSuggestion
 }
