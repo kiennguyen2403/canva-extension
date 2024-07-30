@@ -1,11 +1,28 @@
 import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
-import { instruction, fontResultFormat, inputFont } from "./prompts";
+import {
+  instruction,
+  fontResultFormat,
+  inputFont,
+  inputColourPallete,
+  typeInstruction,
+  fontOutput,
+} from "./prompts";
 
 type Font = {
-  family: string | null;
-  weight: string | null;
-  style: string | null;
-  size: number | null;
+  formatting: {
+    color: string;
+    underline: boolean;
+    fontName: string;
+    fontSize: number;
+    italic: boolean;
+    fontWeight: string[];
+    link: string;
+    listLevel: number;
+    listMarker: string;
+    strikethrough: boolean;
+    textAlign: string;
+  };
+  text: string;
 }[];
 
 class GeminiHelper {
@@ -35,6 +52,8 @@ class GeminiHelper {
               text: instruction,
             },
             { text: fontResultFormat },
+            { text: typeInstruction },
+            { text: fontOutput },
           ],
           role: "modal",
         },
@@ -52,7 +71,31 @@ class GeminiHelper {
     return result;
   }
 
-  public assessColourPallete(colorPallete: string[]) {}
+  public async assessColourPallete(colorPallete: string[]) {
+    const colourPalleteInString = JSON.stringify(colorPallete);
+    const result = await this.model.generateContent({
+      contents: [
+        {
+          parts: [
+            {
+              text: instruction,
+            },
+          ],
+          role: "modal",
+        },
+        {
+          parts: [{ text: inputColourPallete(colourPalleteInString) }],
+          role: "user",
+        },
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        temperature: 0,
+      },
+    });
+    console.log(result);
+    return result.response.text;
+  }
 }
 
 export const geminiHelper = GeminiHelper.getInstance();
