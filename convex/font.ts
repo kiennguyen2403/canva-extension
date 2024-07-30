@@ -2,7 +2,7 @@ import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { internalAction, internalQuery } from "./_generated/server";
 import { Suggestion } from "./type/types";
-import { geminiHelper } from "../utils/helpers/GeminiHelper";
+import { geminiHelper } from "./helpers/GeminiHelper";
 
 export const fontInputSchema = v.array(
   v.object({
@@ -96,7 +96,7 @@ export const assessFont = internalAction({
   },
   handler: async (ctx, { font }) => {
     const res = await geminiHelper.assessFont(font);
-    const result = JSON.parse(res);
+    const result = JSON.parse(res.response?.candidates?.[0]?.finishMessage ?? "");
     return;
   },
 });

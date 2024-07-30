@@ -1,4 +1,8 @@
-import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
+import {
+  GoogleGenerativeAI,
+  GenerativeModel,
+  GenerateContentResult,
+} from "@google/generative-ai";
 import {
   instruction,
   fontResultFormat,
@@ -42,7 +46,7 @@ class GeminiHelper {
     return GeminiHelper.instance;
   }
 
-  public async assessFont(font: Font) {
+  public async assessFont(font: Font): Promise<GenerateContentResult> {
     const fontInJSON = JSON.stringify(font);
     const result = await this.model.generateContent({
       contents: [
@@ -67,7 +71,7 @@ class GeminiHelper {
         temperature: 0,
       },
     });
-    console.log(result);
+    console.log(result.response.text);
     return result;
   }
 

@@ -24,7 +24,21 @@ http.route({
           "Content-Type": "application/x-www-form-urlencoded",
         },
       });
-      const badReviews: string[] = ["Too-much-images"];
+      const badReviews: string[] = [
+        "Too-much-words",
+        "Too-many-fonts",
+        "Wrong-palettes",
+        "Bad-images",
+        "Bad-typo-colors",
+      ];
+
+      const goodReviews: string[] = [
+        "Right-fonts",
+        "Right-images",
+        "Right-number-of-words",
+        "Right-palettes",
+        "Right-typo-colors",
+      ];
       response.predicted_classes.forEach((predictedClass) => {
         if (badReviews.includes(predictedClass)) {
           suggestions.push({
