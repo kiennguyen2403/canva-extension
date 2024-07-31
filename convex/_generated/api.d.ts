@@ -19,7 +19,7 @@ import type * as content from "../content.js";
 import type * as font from "../font.js";
 import type * as helpers_GeminiHelper_index from "../helpers/GeminiHelper/index.js";
 import type * as helpers_GeminiHelper_prompts from "../helpers/GeminiHelper/prompts.js";
-import type * as images from "../images.js";
+import type * as http from "../http.js";
 import type * as palettes from "../palettes.js";
 
 /**
@@ -36,7 +36,7 @@ declare const fullApi: ApiFromModules<{
   font: typeof font;
   "helpers/GeminiHelper/index": typeof helpers_GeminiHelper_index;
   "helpers/GeminiHelper/prompts": typeof helpers_GeminiHelper_prompts;
-  images: typeof images;
+  http: typeof http;
   palettes: typeof palettes;
 }>;
 export declare const api: FilterApi<
