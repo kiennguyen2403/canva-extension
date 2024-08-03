@@ -39,3 +39,21 @@ export interface ImageModelResponse {
   predictions: Prediction[];
   predicted_classes: string[];
 }
+
+
+export interface fontInputSchema {
+  text: string;
+  formatting: {
+    color: string;
+    underline: boolean;
+    fontName: string;
+    fontSize: number;
+    italic: boolean;
+    fontWeight: string[];
+    link: string;
+    listLevel: number;
+    listMarker: string;
+    strikethrough: boolean;
+    textAlign: string;
+  }
+}

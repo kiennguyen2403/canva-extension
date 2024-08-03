@@ -3,6 +3,7 @@ import { httpAction } from "./_generated/server";
 import { api } from "./_generated/api";
 import axios from "axios";
 import { ImageModelResponse, Suggestion } from "./type/types";
+import { geminiHelper } from "./helpers/GeminiHelper";
 
 const http = httpRouter();
 
@@ -12,18 +13,17 @@ http.route({
   handler: httpAction(async (ctx, request) => {
     try {
       console.log("Request received");
-      console.log(process.env.ROBLOW_API);
-      console.log(process.env.ROBLOW_API_KEY);
       const suggestions: Suggestion[] = [];
       const blob = await request.blob();
       const storageId = await ctx.storage.store(blob);
       const url = await ctx.storage.getUrl(storageId);
-      console.log("url: ",url);
-      const response:any = await axios({
+      console.log("url: ", process.env.ROBOFLOW_API);
+      console.log("key: ", process.env.ROBOFLOW_API_KEY);
+      const response: any = await axios({
         method: "POST",
-        url: process.env.ROBLOW_API,
+        url: process.env.ROBOFLOW_API,
         params: {
-          api_key: process.env.ROBLOW_API_KEY,
+          api_key: process.env.ROBOFLOW_API_KEY,
           image: url,
         },
         headers: {
@@ -46,12 +46,35 @@ http.route({
         "Right-typo-colors",
       ];
       review.predicted_classes.forEach((predictedClass) => {
-        if (badReviews.includes(predictedClass)) {
+        let content = "";
+        let title = "";
+        switch (predictedClass) {
+          case "Too-much-words":
+            title = "Too many words";
+            content = "There are too many words in the image. Try to reduce the number of words.";
+            break;
+          case "Too-many-fonts":
+            title = "Too many fonts";
+            content = "There are too many fonts in the image. Try to use a single font.";
+            break;
+          case "Wrong-palettes":
+            title = "Wrong color palette";
+            content = "The color palette is not suitable for the image. Try to use a different color palette.";
+            break;
+          case "Bad-images":
+            title = "Bad image quality";
+            content = "The image quality is not good. Try to use a high-quality image.";
+            break;
+          case "Bad-typo-colors":
+            title = "Bad typo colors";
+            content = "The typo colors are not suitable for the image. Try to use a different color.";
+            break;
+        }
+        if (content !== "") {
           suggestions.push({
-            title: "Too many images",
+            title: title,
             type: "warning",
-            content:
-              "You have too many images in your design. Consider reducing the number of images to improve performance.",
+            content: content
           });
         }
       });
@@ -104,4 +127,34 @@ http.route({
   }),
 });
 
+
+http.route({
+  path: "/api/test",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    try {
+      const response = {
+        api: process.env.ROBOFLOW_API,
+        key: process.env.ROBOFLOW_API_KEY
+      }
+      return new Response(JSON.stringify(response), {
+        status: 200,
+        statusText: "OK",
+        headers: new Headers({
+          "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+          Vary: "origin",
+        }),
+      });
+    } catch (e) {
+      console.error(e);
+      return new Response("Error", {
+        status: 500,
+        headers: new Headers({
+          "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+          Vary: "origin",
+        }),
+      });
+    }
+  }),
+});
 export default http;

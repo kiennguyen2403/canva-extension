@@ -14,19 +14,19 @@ import {
 
 type Font = {
   formatting: {
-    color: string;
-    underline: boolean;
-    fontName: string;
-    fontSize: number;
-    italic: boolean;
-    fontWeight: string[];
-    link: string;
-    listLevel: number;
-    listMarker: string;
-    strikethrough: boolean;
-    textAlign: string;
+    color?: string;
+    underline?: boolean;
+    fontName?: string;
+    fontSize?: number;
+    italic?: boolean;
+    fontWeight?: string[];
+    link?: string;
+    listLevel?: number;
+    listMarker?: string;
+    strikethrough?: boolean;
+    textAlign?: string;
   };
-  text: string;
+  text?: string;
 }[];
 
 class GeminiHelper {
@@ -44,6 +44,32 @@ class GeminiHelper {
       );
     }
     return GeminiHelper.instance;
+  }
+
+  public async assessWording(wording: string[]): Promise<GenerateContentResult> {
+    const wordingInString = JSON.stringify(wording);
+    const result = await this.model.generateContent({
+      contents: [
+        {
+          parts: [
+            {
+              text: instruction,
+            },
+          ],
+          role: "modal",
+        },
+        {
+          parts: [{ text: inputFont(wordingInString) }],
+          role: "user",
+        },
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        temperature: 0,
+      },
+    });
+    console.log(result);
+    return result;
   }
 
   public async assessFont(font: Font): Promise<GenerateContentResult> {
