@@ -6,6 +6,7 @@ import {
   inputColourPallete,
   typeInstruction,
   fontOutput,
+  inputWording,
 } from "./prompts";
 
 type Font = {
@@ -28,7 +29,7 @@ type Font = {
 class GeminiHelper {
   private static instance: GeminiHelper;
 
-  private constructor(private model: GenerativeModel) {}
+  private constructor(private model: GenerativeModel) { }
 
   public static getInstance(): GeminiHelper {
     if (!GeminiHelper.instance) {
@@ -52,10 +53,10 @@ class GeminiHelper {
               text: instruction,
             },
           ],
-          role: "modal",
+          role: "model",
         },
         {
-          parts: [{ text: inputFont(wordingInString) }],
+          parts: [{ text: inputWording(wordingInString) }],
           role: "user",
         },
       ],
@@ -64,7 +65,6 @@ class GeminiHelper {
         temperature: 0,
       },
     });
-    console.log(result);
     return result;
   }
 
@@ -81,7 +81,7 @@ class GeminiHelper {
             { text: typeInstruction },
             { text: fontOutput },
           ],
-          role: "modal",
+          role: "model",
         },
         {
           parts: [{ text: inputFont(fontInJSON) }],
@@ -93,11 +93,10 @@ class GeminiHelper {
         temperature: 0,
       },
     });
-    console.log(result.response.text);
     return result;
   }
 
-  public async assessColourPallete(colorPallete: string[]) {
+  public async assessColourPallete(colorPallete: string[]): Promise<GenerateContentResult> {
     const colourPalleteInString = JSON.stringify(colorPallete);
     const result = await this.model.generateContent({
       contents: [
@@ -107,7 +106,7 @@ class GeminiHelper {
               text: instruction,
             },
           ],
-          role: "modal",
+          role: "model",
         },
         {
           parts: [{ text: inputColourPallete(colourPalleteInString) }],
@@ -119,9 +118,11 @@ class GeminiHelper {
         temperature: 0,
       },
     });
-    console.log(result);
-    return result.response.text;
+    return result;
   }
+  // public async grading(font: Font, color: string[], wording: []): Promise<GenerateContentResult> {
+
+  // }
 }
 
 export const geminiHelper = GeminiHelper.getInstance();

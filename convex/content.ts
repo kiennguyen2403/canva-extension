@@ -13,11 +13,11 @@ export const wordingValidation = internalAction({
   handler: async (ctx, { wording }) => {
     try {
       const res = await geminiHelper.assessWording(wording);
-      const result: string = JSON.parse(res.response?.candidates?.[0]?.finishMessage ?? "");
+      const result: string = res.response?.candidates?.[0].content?.parts?.[0]?.text ?? "No suggestions";
       return result;
     } catch (e) {
       console.error(e);
-      return [];
+      return null;
     }
   },
 });

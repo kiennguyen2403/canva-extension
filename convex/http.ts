@@ -1,6 +1,6 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
-import { api } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import axios from "axios";
 import { ImageModelResponse, Suggestion } from "./type/types";
 import { geminiHelper } from "./helpers/GeminiHelper";
@@ -15,10 +15,26 @@ http.route({
       console.log("Request received");
       const suggestions: Suggestion[] = [];
       const blob = await request.blob();
+      if (!blob)
+        return new Response("No image found", {
+          status: 400,
+          headers: new Headers({
+            "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+            Vary: "origin",
+          }),
+        });
+      
       const storageId = await ctx.storage.store(blob);
       const url = await ctx.storage.getUrl(storageId);
-      console.log("url: ", process.env.ROBOFLOW_API);
-      console.log("key: ", process.env.ROBOFLOW_API_KEY);
+      if (!url)
+        return new Response("Error", {
+          status: 500,
+          headers: new Headers({
+            "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+            Vary: "origin",
+          }),
+        });
+      await ctx.runMutation(internal.images.saveImageUrl, { url, storageId });
       const response: any = await axios({
         method: "POST",
         url: process.env.ROBOFLOW_API,

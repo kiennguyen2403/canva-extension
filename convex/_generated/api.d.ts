@@ -16,10 +16,12 @@ import type {
 } from "convex/server";
 import type * as actions from "../actions.js";
 import type * as content from "../content.js";
+import type * as crons from "../crons.js";
 import type * as font from "../font.js";
 import type * as helpers_GeminiHelper_index from "../helpers/GeminiHelper/index.js";
 import type * as helpers_GeminiHelper_prompts from "../helpers/GeminiHelper/prompts.js";
 import type * as http from "../http.js";
+import type * as images from "../images.js";
 import type * as palettes from "../palettes.js";
 
 /**
@@ -33,10 +35,12 @@ import type * as palettes from "../palettes.js";
 declare const fullApi: ApiFromModules<{
   actions: typeof actions;
   content: typeof content;
+  crons: typeof crons;
   font: typeof font;
   "helpers/GeminiHelper/index": typeof helpers_GeminiHelper_index;
   "helpers/GeminiHelper/prompts": typeof helpers_GeminiHelper_prompts;
   http: typeof http;
+  images: typeof images;
   palettes: typeof palettes;
 }>;
 export declare const api: FilterApi<
