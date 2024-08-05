@@ -68,9 +68,9 @@ export const fontValidation = internalAction({
   },
   handler: async (ctx, { font }) => {
     try {
-    const res = await geminiHelper.assessFont(font);
-    const result: string = res.response?.candidates?.[0].content?.parts?.[0]?.text ?? "No suggestions";
-    return result;
+      const res = await geminiHelper.assessFont(font);
+      const result: string = res.response?.candidates?.[0].content?.parts?.[0]?.text ?? "No suggestions";
+      return result;
     } catch (e) {
       console.error(e);
       return null;
