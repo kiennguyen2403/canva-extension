@@ -1,8 +1,4 @@
-import {
-  GoogleGenerativeAI,
-  GenerativeModel,
-  GenerateContentResult,
-} from "@google/generative-ai";
+import { GoogleGenerativeAI, GenerativeModel, GenerateContentResult } from "@google/generative-ai";
 import {
   instruction,
   fontResultFormat,
@@ -13,7 +9,7 @@ import {
 } from "./prompts";
 
 type Font = {
-  formatting: {
+  formatting?: {
     color?: string;
     underline?: boolean;
     fontName?: string;

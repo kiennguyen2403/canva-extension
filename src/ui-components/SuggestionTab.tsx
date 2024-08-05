@@ -5,6 +5,7 @@ import { SuggestionType, type Suggestion } from "src/types/Suggestion";
 export const SuggestionTab = ({
   data,
   action,
+  isSelectable = false, // TODO: remove default value in the future
 }: {
   data: Suggestion[];
   action: ({
@@ -16,6 +17,7 @@ export const SuggestionTab = ({
     original: string;
     suggested: string;
   }) => Promise<void>;
+  isSelectable?: boolean;
 }) => {
   const [selectableData, setSelectedData] = useState<
     (Suggestion & { id: number; selected: boolean })[]
@@ -52,15 +54,17 @@ export const SuggestionTab = ({
           return (
             <Pill
               onClick={() => {
-                const newSelectedData = [...selectableData];
-                newSelectedData[index].selected = !selected;
-                setSelectedData(newSelectedData);
-                if (suggested && original) {
-                  action({
-                    id,
-                    suggested: suggested.rawFullText,
-                    original: original.rawFullText,
-                  });
+                if (isSelectable) {
+                  const newSelectedData = [...selectableData];
+                  newSelectedData[index].selected = !selected;
+                  setSelectedData(newSelectedData);
+                  if (suggested && original) {
+                    action({
+                      id,
+                      suggested: suggested.rawFullText,
+                      original: original.rawFullText,
+                    });
+                  }
                 }
               }}
               text={suggestion}

@@ -4,7 +4,7 @@ export interface Suggestion {
   suggestion: string;
   suggested?: TextAnalysisData;
   original?: TextAnalysisData;
-  type: SuggestionType;
+  type: string; // TODO: change to type: SuggestionType; when types are finalised
   errors: string[];
 }
 
@@ -14,9 +14,9 @@ export interface DataExport {
 }
 
 export enum SuggestionType {
-  General,
-  Grammar,
-  TextStyle,
-  Palette,
-  NoSuggestion
+  General = "General",
+  Grammar = "Grammar",
+  TextStyle = "TextStyle",
+  Palette = "Palette",
+  NoSuggestion = "NoSuggestion",
 }

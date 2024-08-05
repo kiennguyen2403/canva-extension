@@ -40,10 +40,9 @@ export interface ImageModelResponse {
   predicted_classes: string[];
 }
 
-
 export interface fontInputSchema {
   text: string;
-  formatting: {
+  formatting?: {
     color: string;
     underline: boolean;
     fontName: string;
@@ -55,5 +54,5 @@ export interface fontInputSchema {
     listMarker: string;
     strikethrough: boolean;
     textAlign: string;
-  }
+  };
 }

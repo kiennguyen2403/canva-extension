@@ -20,6 +20,10 @@ import { cleanText } from "src/utils/cleanText";
 import { mapTextRegionToTextData } from "src/utils/mapTextRegionToTextData";
 import type { TextAnalysisData } from "src/types/AnalysisData";
 import { SuggestionTabContainer } from "./SuggestionTabContainer";
+import { useAction } from "convex/react";
+import { api } from "../../convex/_generated/api";
+import { convertSuggestionType } from "src/utils/convertSuggestionType";
+import { convertTextAnalysisDataType } from "src/utils/convertTextAnalysisDataType";
 
 export const SelectionScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -73,6 +77,8 @@ export const SelectionScreen = () => {
     }
   };
 
+  const generateSuggestions = useAction(api.actions.generateSuggestions);
+
   const getAnalysisData = async () => {
     if (
       currentRichTextSelection &&
@@ -102,31 +108,35 @@ export const SelectionScreen = () => {
         }
         analysisData.push(datum);
       }
-      /** TODO: calling backend */
+
+      /** Use convex to generate instant suggestions */
       console.log("call backend");
+      const generatedSuggestions = await generateSuggestions({
+        designs: convertTextAnalysisDataType(analysisData),
+      });
 
       /** Dummy data suggestion */
-      const fakeSuggestions: Suggestion[] = [];
-      // Suggestion with no comments
-      fakeSuggestions.push({
-        suggestion: "",
-        type: SuggestionType.NoSuggestion,
-        errors: [],
-      });
-      // Suggestion with grammar errors
-      for (let i = 0; i < analysisData.length; i++) {
-        if (analysisData[i].fullText === "Hello Worl") {
-          fakeSuggestions.push({
-            suggestion: `Do you mean 'Hello World'?`,
-            suggested: { ...analysisData[i], fullText: "Hello World", rawFullText: "Hello\nWorld" },
-            type: SuggestionType.Grammar,
-            original: analysisData[i],
-            errors: ["Grammar error"],
-          });
-        }
-      }
+      // const fakeSuggestions: Suggestion[] = [];
+      // // Suggestion with no comments
+      // fakeSuggestions.push({
+      //   suggestion: "",
+      //   type: SuggestionType.NoSuggestion,
+      //   errors: [],
+      // });
+      // // Suggestion with grammar errors
+      // for (let i = 0; i < analysisData.length; i++) {
+      //   if (analysisData[i].fullText === "Hello Worl") {
+      //     fakeSuggestions.push({
+      //       suggestion: `Do you mean 'Hello World'?`,
+      //       suggested: { ...analysisData[i], fullText: "Hello World", rawFullText: "Hello\nWorld" },
+      //       type: SuggestionType.Grammar,
+      //       original: analysisData[i],
+      //       errors: ["Grammar error"],
+      //     });
+      //   }
+      // }
 
-      setSuggestions(fakeSuggestions);
+      setSuggestions(convertSuggestionType(generatedSuggestions));
       setIsLoading(false);
     }
   };
