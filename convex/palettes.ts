@@ -48,28 +48,6 @@ export const validatePalette = internalAction({
     },
     handler: async (ctx, { palette }) => {
         try {
-            // const response: Suggestion[] = [];
-            // const palettes: any[] = await ctx.runQuery(internal.palettes.queryPalettes, { palette })
-            // if (palettes.length == 0) {
-            //     response.push({
-            //         title: "Palette",
-            //         type: "warning",
-            //         content: "No matching palettes found"
-            //     });
-            // } else if (palettes[0].missing.length > 0) {
-            //     response.push({
-            //         title: "Palette",
-            //         type: "warning",
-            //         content: "Multiples palettes used in your design",
-            //     });
-            // } else {
-            //     response.push({
-            //         title: "Palette",
-            //         type: "success",
-            //         content: "Palette is valid",
-            //     });
-            // }
-            // return response;
             const res = await geminiHelper.assessColourPallete(palette);
             const result: string = res.response?.candidates?.[0].content.parts[0].text ?? "No suggestions";
             return result;

@@ -8,7 +8,7 @@ export interface Palette {
 }
 
 export interface Design {
-  name: string;
+  naming: string;
   components: Component[];
 }
 

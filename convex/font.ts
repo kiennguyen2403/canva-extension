@@ -62,41 +62,18 @@ export const fontRulesQuery = internalQuery({
   },
 });
 
-// export const fontValidation = internalAction({
-//   args: {
-//     font: v.array(
-//       v.object({
-//         family: v.optional(v.string()),
-//         weight: v.optional(v.string()),
-//         style: v.optional(v.string()),
-//         size: v.optional(v.number()),
-//       })
-//     ),
-//   },
-//   handler: async (ctx, { font }) => {
-//     const suggestions: Suggestion[] = [];
-//     if (font.length > 3) {
-//       const suggestion: Suggestion = {
-//         title: "Font",
-//         type: "warning",
-//         content: "Too many fonts",
-//       };
-//       suggestions.push(suggestion);
-//     }
-
-//     font.forEach((f) => {});
-
-//     return suggestions;
-//   },
-// });
-
 export const fontValidation = internalAction({
   args: {
     font: fontInputSchema,
   },
   handler: async (ctx, { font }) => {
+    try {
     const res = await geminiHelper.assessFont(font);
     const result: string = res.response?.candidates?.[0].content?.parts?.[0]?.text ?? "No suggestions";
     return result;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
   },
 });

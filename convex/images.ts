@@ -4,9 +4,6 @@ import { internalAction, internalMutation, internalQuery } from "./_generated/se
 import { api, internal } from "./_generated/api";
 import axios from "axios";
 
-
-
-
 export const uploadImagesToModel = internalAction({
     handler: async (ctx) => {
         try {  
