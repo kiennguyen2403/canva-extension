@@ -13,7 +13,7 @@ export const AppLayout = ({
   setScreen: (screen: AppScreenType) => void;
 }) => {
   return (
-    <Box paddingTop="2u" height="full">
+    <Box paddingX="2u">
       <Box paddingY="1u">
         <Text>
           {screen === AppScreenType.SelectionSuggestionScreen ? (

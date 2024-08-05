@@ -14,10 +14,10 @@ export const FullSuggestionScreen = () => {
       <Box paddingBottom="1u" paddingEnd="1u">
         <ProgressBar size="medium" tone="info" value={85} />
         {/* <ProgressBar size="medium" tone="critical" value={15} /> */}
-        <Text>Score: 85/100</Text>
+        <Box paddingY="1u">
+          <Text>Score: 85/100</Text>
+        </Box>
       </Box>
-
-      <SuggestionTabContainer />
     </>
   );
 };

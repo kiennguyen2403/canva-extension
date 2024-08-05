@@ -2,7 +2,17 @@ import React, { ReactElement } from "react";
 import { Tabs, Tab, TabList, TabPanel, TabPanels, Rows } from "@canva/app-ui-kit";
 import styles from "../../styles/components.css";
 
-export const SuggestionTabContainer = ({ children }: { children?: ReactElement }) => {
+export const SuggestionTabContainer = ({
+  allElement,
+  textElement,
+  mediaElement,
+  colorElement,
+}: {
+  allElement: ReactElement;
+  textElement: ReactElement;
+  mediaElement: ReactElement;
+  colorElement: ReactElement;
+}) => {
   return (
     <div className={styles.scrollContainer}>
       <Tabs height="fill">
@@ -14,10 +24,10 @@ export const SuggestionTabContainer = ({ children }: { children?: ReactElement }
             <Tab id="color">Color</Tab>
           </TabList>
           <TabPanels>
-            <TabPanel id="all"></TabPanel>
-            <TabPanel id="text">{children}</TabPanel>
-            <TabPanel id="media"></TabPanel>
-            <TabPanel id="color"></TabPanel>
+            <TabPanel id="all">{allElement}</TabPanel>
+            <TabPanel id="text">{textElement}</TabPanel>
+            <TabPanel id="media">{mediaElement}</TabPanel>
+            <TabPanel id="color">{colorElement}</TabPanel>
           </TabPanels>
         </Rows>
       </Tabs>
