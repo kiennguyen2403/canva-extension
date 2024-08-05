@@ -1,179 +1,79 @@
-"use client";
-import { action, internalAction } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import { fontInputSchema, Suggestion } from "./type/types";
+import { internalAction, internalQuery } from "./_generated/server";
+import { Suggestion } from "./type/types";
 import { geminiHelper } from "./helpers/GeminiHelper";
 
-export const designInputSchema = v.object({
-  naming: v.string(),
-  components: v.array(
-    v.object({
-      name: v.string(),
-      props: v.array(v.object({ key: v.string(), value: v.any() })),
-    })
-  ),
-});
+export const fontInputSchema = v.array(
+  v.object({
+    formatting: v.object({
+      color: v.optional(v.string()),
+      underline: v.optional(v.boolean()),
+      fontName: v.optional(v.string()),
+      fontSize: v.optional(v.number()),
+      italic: v.optional(v.boolean()),
+      fontWeight: v.optional(v.array(v.string())), //not sure
+      link: v.optional(v.string()),
+      listLevel: v.optional(v.number()),
+      listMarker: v.optional(v.string()), //v.enum(["none", "disc", "circle", "square", "decimal", "lower-alpha", "lower-roman", "checked", "unchecked"]),
+      strikethrough: v.optional(v.boolean()),
+      textAlign: v.optional(v.string()), //v.enum(["start", "center", "end", "justify"]),
+    }),
+    text: v.optional(v.string()),
+  })
+);
 
-export const generateSuggestions = action({
+export const fontRulesQuery = internalQuery({
   args: {
-    designs: designInputSchema,
+    font: v.array(
+      v.object({
+        family: v.optional(v.string()),
+        weight: v.optional(v.string()),
+        style: v.optional(v.string()),
+        size: v.optional(v.number()),
+      })
+    ),
   },
-  handler: async (ctx, { designs }) => {
+  handler: async (ctx, { font }) => {
     try {
-      let suggestions: Suggestion[] = [];
-      const palette: string[] = []
-      const content: string[] = [];
-      const fonts: fontInputSchema[] = [];
-      for (const component of designs.components) {
-        if (component.name === "Text") {
-          content.push(component.props[0].value)
-          const font: fontInputSchema = {
-            text: component.props[0].value,
-            formatting: {
-              color: component.props?.[1]?.value,
-              underline: component.props?.[2]?.value,
-              fontName: component.props?.[3]?.value,
-              fontSize: component.props?.[4]?.value,
-              italic: component.props?.[5]?.value,
-              fontWeight: component.props?.[6]?.value,
-              link: component.props?.[7]?.value,
-              listLevel: component.props?.[8]?.value,
-              listMarker: component.props?.[9]?.value,
-              textAlign: component.props?.[10]?.value,
-              strikethrough: component.props?.[11]?.value,
-            }
-          }
-          fonts.push(font);
-        }
-        component.props.forEach((prop) => {
-          if (prop.key === "color") {
-            palette.push(prop.value)
-          }
+      const suggestions: any[] = [];
+      const fontRules = await ctx.db.query("fontRules").collect();
+      const match = fontRules.filter((f) => {
+        return font.every(
+          (c) =>
+            c.family == f.family &&
+            c.weight == f.weight &&
+            c.style == f.style &&
+            (c.size ?? 0) <= f.size
+        );
+      });
+
+      match.forEach((m) => {
+        suggestions.push({
+          invalidFont: m,
         });
-
-      }
-      const paletteValidation : string | null= await ctx.runAction(
-        internal.palettes.validatePalette,
-        { palette: palette }
-      );
-
-      JSON.parse(paletteValidation ?? '')["recommendations"].forEach((p: string) => {
-        suggestions.push({
-          title: "Palette",
-          type: "warning",
-          content: p
-        })
-      })
-
-      const wordingValidation : string | null = await ctx.runAction(
-        internal.content.wordingValidation,
-        { wording: content }
-      );
-
-      JSON.parse(wordingValidation ?? '')["recommendations"].forEach((p: string) => {
-        suggestions.push({
-          title: "Content",
-          type: "warning",
-          content: p
-        })
-      })
-
-      const fontValidation : string | null = await ctx.runAction(
-        internal.font.fontValidation,
-        { font: fonts }
-      );
-
-      JSON.parse(fontValidation ?? '')["recommendations"].forEach((p: string) => {
-        suggestions.push({
-          title: "Font",
-          type: "warning",
-          content: p
-        })
-      })
-
-      if (suggestions.length === 0) {
-        suggestions.push({
-          title: "Success",
-          type: "success",
-          content: "No issues found",
-        })
-      }
-
-      // const wordingGrade: number | null = JSON.parse(wordingValidation ?? '')["grade"]["overall"] ?? null;
-      // const paletteGrade: number | null = JSON.parse(paletteValidation ?? '')["grade"]["overall"] ?? null;
-      // const fontGrade: number | null = JSON.parse(fontValidation ?? '')["grade"]["overall"] ?? null;
+      });
 
       return suggestions;
-    } catch (error) {
-      console.error(error)
+    } catch (e) {
+      console.error(e);
       return [];
     }
   },
 });
 
-export const generateFinalReview = internalAction({
+export const fontValidation = internalAction({
   args: {
-    designs: designInputSchema,
-    tags: v.array(v.string())
+    font: fontInputSchema,
   },
-  handler: async (ctx, { designs, tags }) => {
+  handler: async (ctx, { font }) => {
     try {
-      const response = {
-        "grade": {
-          "overall": 0,
-          "syntaxAndCorrectness": ""
-        },
-        "feedbacks": [],
-        "recommendations": []
-      }
-      let suggestions: Suggestion[] = [];
-      const palette: string[] = []
-      const content: string[] = [];
-      const fonts: fontInputSchema[] = [];
-      for (const component of designs.components) {
-        if (component.name === "Text") {
-          content.push(component.props[0].value)
-          const font: fontInputSchema = {
-            text: component.props[0].value,
-            formatting: {
-              color: component.props?.[1]?.value,
-              underline: component.props?.[2]?.value,
-              fontName: component.props?.[3]?.value,
-              fontSize: component.props?.[4]?.value,
-              italic: component.props?.[5]?.value,
-              fontWeight: component.props?.[6]?.value,
-              link: component.props?.[7]?.value,
-              listLevel: component.props?.[8]?.value,
-              listMarker: component.props?.[9]?.value,
-              textAlign: component.props?.[10]?.value,
-              strikethrough: component.props?.[11]?.value,
-            }
-          }
-          fonts.push(font);
-        }
-        component.props.forEach((prop) => {
-          if (prop.key === "color") {
-            palette.push(prop.value)
-          }
-        });
-
-      }
-      const res = await geminiHelper.grading(
-        fonts,
-        content,
-        palette,
-        tags
-      );
-
+      const res = await geminiHelper.assessFont(font);
       const result: string = res.response?.candidates?.[0].content?.parts?.[0]?.text ?? "No suggestions";
-      return JSON.parse(result);
-    } catch (error) {
-      console.error(error)
-      return [];
+      return result;
+    } catch (e) {
+      console.error(e);
+      return null;
     }
-  }
+  },
 });
-
-
-
