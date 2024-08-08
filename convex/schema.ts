@@ -20,6 +20,7 @@ export default defineSchema({
         content: v.string(),
     }),
     palettes: defineTable({
+        name: v.string(),
         colors: v.array(v.string()),
     }),
     fontRules: defineTable({
