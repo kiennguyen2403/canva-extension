@@ -8,7 +8,7 @@ export interface Palette {
 }
 
 export interface Design {
-  name: string;
+  naming: string;
   components: Component[];
 }
 
@@ -40,7 +40,7 @@ export interface ImageModelResponse {
   predicted_classes: string[];
 }
 
-export interface fontInputSchema {
+export interface Font {
   text: string;
   formatting?: {
     color: string;
@@ -54,5 +54,5 @@ export interface fontInputSchema {
     listMarker: string;
     strikethrough: boolean;
     textAlign: string;
-  };
+  }
 }

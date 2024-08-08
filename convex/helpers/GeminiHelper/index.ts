@@ -6,6 +6,11 @@ import {
   inputColourPallete,
   typeInstruction,
   fontOutput,
+  inputWording,
+  colourPalleteOutput,
+  wordingOutput,
+  finalReviewInformation,
+  finalReviewOutput,
 } from "./prompts";
 
 type Font = {
@@ -28,7 +33,7 @@ type Font = {
 class GeminiHelper {
   private static instance: GeminiHelper;
 
-  private constructor(private model: GenerativeModel) {}
+  private constructor(private model: GenerativeModel) { }
 
   public static getInstance(): GeminiHelper {
     if (!GeminiHelper.instance) {
@@ -51,11 +56,14 @@ class GeminiHelper {
             {
               text: instruction,
             },
+            {
+              text: wordingOutput
+            }
           ],
           role: "model",
         },
         {
-          parts: [{ text: inputFont(wordingInString) }],
+          parts: [{ text: inputWording(wordingInString) }],
           role: "user",
         },
       ],
@@ -64,7 +72,6 @@ class GeminiHelper {
         temperature: 0,
       },
     });
-    console.log(result);
     return result;
   }
 
@@ -74,9 +81,7 @@ class GeminiHelper {
       contents: [
         {
           parts: [
-            {
-              text: instruction,
-            },
+            { text: instruction },
             { text: fontResultFormat },
             { text: typeInstruction },
             { text: fontOutput },
@@ -93,11 +98,10 @@ class GeminiHelper {
         temperature: 0,
       },
     });
-    console.log(result.response.text);
     return result;
   }
 
-  public async assessColourPallete(colorPallete: string[]) {
+  public async assessColourPallete(colorPallete: string[]): Promise<GenerateContentResult> {
     const colourPalleteInString = JSON.stringify(colorPallete);
     const result = await this.model.generateContent({
       contents: [
@@ -106,11 +110,16 @@ class GeminiHelper {
             {
               text: instruction,
             },
+            {
+              text: colourPalleteOutput
+            }
           ],
           role: "model",
         },
         {
-          parts: [{ text: inputColourPallete(colourPalleteInString) }],
+          parts: [
+            { text: inputColourPallete(colourPalleteInString) }
+          ],
           role: "user",
         },
       ],
@@ -119,8 +128,40 @@ class GeminiHelper {
         temperature: 0,
       },
     });
-    console.log(result);
-    return result.response.text;
+    return result;
+  }
+  public async grading(font: Font, color: string[], wording: string[], tags: string[]): Promise<GenerateContentResult> {
+    const fontInJSON = JSON.stringify(font);
+    const colorInJSON = JSON.stringify(color);
+    const wordingInJSON = JSON.stringify(wording);
+    const result = await this.model.generateContent({
+      contents: [
+        {
+          parts: [
+            { text: instruction },
+            { text: finalReviewInformation(tags)},
+            { text: fontResultFormat },
+            { text: finalReviewOutput },
+          ],
+          role: "model",
+        },
+        {
+          parts: [
+            { text: inputFont(fontInJSON) },
+            { text: inputColourPallete(colorInJSON) },
+            { text: inputWording(wordingInJSON) },
+          ],
+          role: "user",
+        },
+
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        temperature: 0,
+      },
+    });
+
+    return result;
   }
 }
 

@@ -1,6 +1,5 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { title } from "process";
 
 export default defineSchema({
     designs: defineTable({
@@ -28,5 +27,9 @@ export default defineSchema({
         weight: v.string(),
         style: v.string(),
         size: v.number(),
+    }),
+    images: defineTable({
+        url: v.string(),
+        storageId: v.id("_storage"),
     }),
 });
