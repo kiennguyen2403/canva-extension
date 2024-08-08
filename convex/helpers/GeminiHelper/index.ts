@@ -52,7 +52,7 @@ class GeminiHelper {
               text: instruction,
             },
           ],
-          role: "modal",
+          role: "model",
         },
         {
           parts: [{ text: inputFont(wordingInString) }],
@@ -81,7 +81,7 @@ class GeminiHelper {
             { text: typeInstruction },
             { text: fontOutput },
           ],
-          role: "modal",
+          role: "model",
         },
         {
           parts: [{ text: inputFont(fontInJSON) }],
@@ -107,7 +107,7 @@ class GeminiHelper {
               text: instruction,
             },
           ],
-          role: "modal",
+          role: "model",
         },
         {
           parts: [{ text: inputColourPallete(colourPalleteInString) }],

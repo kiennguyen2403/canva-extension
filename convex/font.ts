@@ -98,7 +98,8 @@ export const fontValidation = internalAction({
   },
   handler: async (ctx, { font }) => {
     const res = await geminiHelper.assessFont(font);
-    const result: string = JSON.parse(res.response?.candidates?.[0]?.finishMessage ?? "");
+    console.log(res);
+    const result: string = res.response?.candidates?.[0]?.finishMessage ?? "";
     return result;
   },
 });

@@ -68,10 +68,12 @@ export const generateSuggestions = action({
     const wordingValidation = await ctx.runAction(internal.content.wordingValidation, {
       wording: content,
     });
-    console.log(wordingValidation);
-    suggestions = [...paletteValidation];
+
     const fontValidation = await ctx.runAction(internal.font.fontValidation, { font: fonts });
-    console.log(fontValidation);
+    console.log(`wording: ${wordingValidation}`);
+    suggestions = [...paletteValidation];
+    console.log(`palette: ${JSON.stringify(paletteValidation)}`);
+    console.log(`font: ${fontValidation}`);
 
     return suggestions;
   },

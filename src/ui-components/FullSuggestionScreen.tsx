@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { LoadingIndicator, Box, ProgressBar, Text } from "@canva/app-ui-kit";
-import { SuggestionTabContainer } from "./SuggestionTabContainer";
 
 export const FullSuggestionScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
