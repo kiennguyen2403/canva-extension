@@ -1,37 +1,28 @@
 import {
-  Tabs,
-  Tab,
-  TabList,
-  TabPanel,
-  LoadingIndicator,
-  Box,
-  TabPanels,
-  Rows,
-  Text,
-  Masonry,
-  MasonryItem,
-  ImageCard,
-  Swatch,
-  Columns,
-  Column,
   Accordion,
   AccordionItem,
+  Box,
+  ImageCard,
+  LoadingIndicator,
+  Masonry,
+  MasonryItem,
+  Rows,
+  Swatch,
+  Text,
 } from "@canva/app-ui-kit";
-import React, { useEffect, useState } from "react";
-import { SuggestionTab } from "./SuggestionTab";
-import { Suggestion, SuggestionType } from "../types/Suggestion";
-import { useSelection } from "utils/use_selection_hook";
-import { RichTextContentDraft, TextContentDraft } from "src/types/Draft";
 import type { SelectionEvent } from "@canva/preview/design";
 import { selection } from "@canva/preview/design";
-import { cleanText } from "src/utils/cleanText";
-import { mapTextRegionToTextData } from "src/utils/mapTextRegionToTextData";
-import type { TextAnalysisData } from "src/types/AnalysisData";
-import { SuggestionTabContainer } from "./SuggestionTabContainer";
 import { useAction } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import React, { useEffect, useState } from "react";
+import type { TextAnalysisData } from "src/types/AnalysisData";
+import { cleanText } from "src/utils/cleanText";
 import { convertSuggestionType } from "src/utils/convertSuggestionType";
 import { convertTextAnalysisDataType } from "src/utils/convertTextAnalysisDataType";
+import { mapTextRegionToTextData } from "src/utils/mapTextRegionToTextData";
+import { api } from "../../convex/_generated/api";
+import { Suggestion } from "../types/Suggestion";
+import { SuggestionTab } from "./SuggestionTab";
+import { SuggestionTabContainer } from "./SuggestionTabContainer";
 
 export const SelectionScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -122,27 +113,6 @@ export const SelectionScreen = () => {
       const generatedSuggestions = await generateSuggestions({
         designs: convertTextAnalysisDataType(analysisData),
       });
-
-      /** Dummy data suggestion */
-      // const fakeSuggestions: Suggestion[] = [];
-      // // Suggestion with no comments
-      // fakeSuggestions.push({
-      //   suggestion: "",
-      //   type: SuggestionType.NoSuggestion,
-      //   errors: [],
-      // });
-      // // Suggestion with grammar errors
-      // for (let i = 0; i < analysisData.length; i++) {
-      //   if (analysisData[i].fullText === "Hello Worl") {
-      //     fakeSuggestions.push({
-      //       suggestion: `Do you mean 'Hello World'?`,
-      //       suggested: { ...analysisData[i], fullText: "Hello World", rawFullText: "Hello\nWorld" },
-      //       type: SuggestionType.Grammar,
-      //       original: analysisData[i],
-      //       errors: ["Grammar error"],
-      //     });
-      //   }
-      // }
 
       setSuggestions(convertSuggestionType(generatedSuggestions));
       setIsLoading(false);

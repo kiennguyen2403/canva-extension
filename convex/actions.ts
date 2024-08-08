@@ -1,10 +1,9 @@
 "use client";
-import { action } from "./_generated/server";
+import { action, internalAction } from "./_generated/server";
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
-import fetch from "node-fetch";
 import { Font, Suggestion } from "./type/types";
-import { link } from "fs";
+import { geminiHelper } from "./helpers/GeminiHelper";
 
 export const designInputSchema = v.object({
   naming: v.string(),
@@ -118,6 +117,64 @@ export const generateSuggestions = action({
       }
 
       return suggestions;
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  },
+});
+
+export const generateFinalReview = internalAction({
+  args: {
+    designs: designInputSchema,
+    tags: v.array(v.string()),
+  },
+  handler: async (ctx, { designs, tags }) => {
+    try {
+      const response = {
+        grade: {
+          overall: 0,
+          syntaxAndCorrectness: "",
+        },
+        feedbacks: [],
+        recommendations: [],
+      };
+      let suggestions: Suggestion[] = [];
+      const palette: string[] = [];
+      const content: string[] = [];
+      const fonts: Font[] = [];
+      for (const component of designs.components) {
+        if (component.name === "Text") {
+          content.push(component.props[0].value);
+          const font: Font = {
+            text: component.props[0].value,
+            formatting: {
+              color: component.props?.[1]?.value,
+              underline: component.props?.[2]?.value,
+              fontName: component.props?.[3]?.value,
+              fontSize: component.props?.[4]?.value,
+              italic: component.props?.[5]?.value,
+              fontWeight: component.props?.[6]?.value,
+              link: component.props?.[7]?.value,
+              listLevel: component.props?.[8]?.value,
+              listMarker: component.props?.[9]?.value,
+              textAlign: component.props?.[10]?.value,
+              strikethrough: component.props?.[11]?.value,
+            },
+          };
+          fonts.push(font);
+        }
+        component.props.forEach((prop) => {
+          if (prop.key === "color") {
+            palette.push(prop.value);
+          }
+        });
+      }
+      const res = await geminiHelper.grading(fonts, content, palette, tags);
+
+      const result: string =
+        res.response?.candidates?.[0].content?.parts?.[0]?.text ?? "No suggestions";
+      return JSON.parse(result);
     } catch (error) {
       console.error(error);
       return [];

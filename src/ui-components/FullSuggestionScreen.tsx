@@ -1,22 +1,44 @@
-import React, { useEffect, useState, useRef } from "react";
-import { LoadingIndicator, Box, ProgressBar, Text } from "@canva/app-ui-kit";
+import React, { useEffect, useState, useRef, useContext } from "react";
+import { LoadingIndicator, Box, ProgressBar, Text, Rows } from "@canva/app-ui-kit";
+import { AppContext } from "./AppContext";
+import { SuggestionTab } from "./SuggestionTab";
+import { SuggestionType } from "src/types/Suggestion";
+import styles from "../../styles/components.css";
 
 export const FullSuggestionScreen = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const { data } = useContext(AppContext);
 
-  return isLoading ? (
-    <Box padding="12u">
-      <LoadingIndicator size="large" />
-    </Box>
-  ) : (
+  return (
     <>
-      <Box paddingBottom="1u" paddingEnd="1u">
-        <ProgressBar size="medium" tone="info" value={85} />
-        {/* <ProgressBar size="medium" tone="critical" value={15} /> */}
-        <Box paddingY="1u">
-          <Text>Score: 85/100</Text>
+      {data && typeof data != "string" ? (
+        <Box paddingBottom="1u" paddingEnd="1u">
+          <ProgressBar
+            size="medium"
+            tone={data.grade.overall >= 5 ? "info" : "critical"}
+            value={data.grade.overall * 10}
+          />
+          <Box paddingY="1u">
+            <Text>Score: {data.grade.overall}/10</Text>
+          </Box>
+          <SuggestionTab
+            data={data.recommendations.map((recommendation) => ({
+              suggestion: recommendation,
+              type: SuggestionType.General,
+              errors: [],
+            }))}
+            title="Suggestions on full design"
+          />
         </Box>
-      </Box>
+      ) : (
+        <Box paddingY="12u" display="flex" alignItems="center">
+          <Rows spacing="2u">
+            <Text variant="bold" size="large" alignment="center">
+              It looks like you have not received any recommendations
+            </Text>
+            <Text alignment="center">Try clicking "Refresh" again</Text> 
+          </Rows>
+        </Box>
+      )}
     </>
   );
 };

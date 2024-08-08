@@ -16,39 +16,42 @@ http.route({
       const suggestions: Suggestion[] = [];
       const formData = await request.formData();
       const blob = formData.get("file") as Blob;
+      console.log(blob);
       const design: Design = JSON.parse(formData.get("design") as string);
-      const components = design.components.map((component) => {
-        return {
-          name: component.name,
-          props: Object.entries(component.props).map(([key, value]) => {
+      const components = design
+        ? design.components.map((component) => {
             return {
-              key,
-              value
-            }
+              name: component.name,
+              props: Object.entries(component.props).map(([key, value]) => {
+                return {
+                  key,
+                  value,
+                };
+              }),
+            };
           })
-        }
-      });
+        : [];
       const designObject = {
-        naming: design.naming,
-        components: components
-      }
+        naming: design?.naming || "",
+        components: components,
+      };
 
       if (!blob)
         return new Response("No image found", {
           status: 400,
           headers: new Headers({
-            "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+            "Access-Control-Allow-Origin": process.env.CANVA_APP_ORIGIN!,
             Vary: "origin",
           }),
         });
-  
+
       const storageId = await ctx.storage.store(blob);
       const url = await ctx.storage.getUrl(storageId);
       if (!url)
         return new Response("Error", {
           status: 500,
           headers: new Headers({
-            "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+            "Access-Control-Allow-Origin": process.env.CANVA_APP_ORIGIN!,
             Vary: "origin",
           }),
         });
@@ -61,22 +64,20 @@ http.route({
           image: url,
         },
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        }
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
       });
       const review: ImageModelResponse = response.data;
 
-      const finalReview = await ctx.runAction(internal.actions.generateFinalReview, 
-        { 
-          designs: designObject,
-          tags: review.predicted_classes 
-        }
-      );
+      const finalReview = await ctx.runAction(internal.actions.generateFinalReview, {
+        designs: designObject,
+        tags: review.predicted_classes,
+      });
       return new Response(JSON.stringify(finalReview), {
         status: 200,
         statusText: "OK",
         headers: new Headers({
-          "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+          "Access-Control-Allow-Origin": process.env.CANVA_APP_ORIGIN!,
           Vary: "origin",
         }),
       });
@@ -85,7 +86,7 @@ http.route({
       return new Response("Error", {
         status: 500,
         headers: new Headers({
-          "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+          "Access-Control-Allow-Origin": process.env.CANVA_APP_ORIGIN!,
           Vary: "origin",
         }),
       });
@@ -108,7 +109,7 @@ http.route({
       return new Response(null, {
         headers: new Headers({
           // e.g. https://mywebsite.com, configured on your Convex dashboard
-          "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+          "Access-Control-Allow-Origin": process.env.CANVA_APP_ORIGIN!,
           "Access-Control-Allow-Methods": "POST",
           "Access-Control-Allow-Headers": "Content-Type, Digest",
           "Access-Control-Max-Age": "86400",

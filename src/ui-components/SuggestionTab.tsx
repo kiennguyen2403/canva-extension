@@ -1,4 +1,14 @@
-import { CheckIcon, Pill, Rows, Box, Text, Columns, Avatar, Column } from "@canva/app-ui-kit";
+import {
+  CheckIcon,
+  Pill,
+  Rows,
+  Box,
+  Text,
+  Columns,
+  Avatar,
+  Column,
+  TypographyCard,
+} from "@canva/app-ui-kit";
 import React, { useEffect, useState } from "react";
 import { SuggestionType, type Suggestion } from "src/types/Suggestion";
 
@@ -6,9 +16,10 @@ export const SuggestionTab = ({
   data,
   action,
   isSelectable = false, // TODO: remove default value in the future
+  title,
 }: {
   data: Suggestion[];
-  action: ({
+  action?: ({
     id,
     original,
     suggested,
@@ -18,6 +29,7 @@ export const SuggestionTab = ({
     suggested: string;
   }) => Promise<void>;
   isSelectable?: boolean;
+  title?: string;
 }) => {
   const [selectableData, setSelectedData] = useState<
     (Suggestion & { id: number; selected: boolean })[]
@@ -42,7 +54,7 @@ export const SuggestionTab = ({
       <Columns spacing="1u">
         <Column width="4/5">
           <Box>
-            <Text>Suggestions regarding text grammar, fonts and styles</Text>
+            <Text>{title || "Suggestions regarding text grammar, fonts and styles"}</Text>
           </Box>
         </Column>
         <Column>
@@ -51,27 +63,34 @@ export const SuggestionTab = ({
       </Columns>
       {selectableData &&
         selectableData.map(({ selected, suggestion, suggested, original, id }, index) => {
-          return (
+          return isSelectable ? (
             <Pill
               onClick={() => {
-                if (isSelectable) {
-                  const newSelectedData = [...selectableData];
-                  newSelectedData[index].selected = !selected;
-                  setSelectedData(newSelectedData);
-                  if (suggested && original) {
-                    action({
-                      id,
-                      suggested: suggested.rawFullText,
-                      original: original.rawFullText,
-                    });
-                  }
+                const newSelectedData = [...selectableData];
+                newSelectedData[index].selected = !selected;
+                setSelectedData(newSelectedData);
+                if (action && suggested && original) {
+                  action({
+                    id,
+                    suggested: suggested.rawFullText,
+                    original: original.rawFullText,
+                  });
                 }
               }}
               text={suggestion}
               selected={selected}
               end={selected && <CheckIcon />}
-              truncateText={false}
+              truncateText={true}
             />
+          ) : (
+            <TypographyCard
+              ariaLabel="Copy text"
+              onClick={() => {
+                navigator.clipboard.writeText(suggestion);
+              }}
+            >
+              <Text>{suggestion}</Text>
+            </TypographyCard>
           );
         })}
     </Rows>

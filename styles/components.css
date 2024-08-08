@@ -36,3 +36,7 @@
 .scrollContainer:focus-within::-webkit-scrollbar-thumb {
   visibility: visible;
 }
+
+.fullHeight {
+  height: 100%;
+}
