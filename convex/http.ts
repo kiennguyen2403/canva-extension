@@ -121,4 +121,22 @@ http.route({
   }),
 });
 
+http.route({
+  path: "/api/templates",
+  method: "POST",
+  handler: httpAction(async (ctx, request) => {
+    const prompts = await request.json();
+    const response = await axios.get(process.env.TEMPLATES_API!, prompts);
+    
+    return new Response("Hello", {
+      status: 200,
+      statusText: "OK",
+      headers: new Headers({
+        "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+        Vary: "origin",
+      }),
+    });
+  }),
+});
+
 export default http;
