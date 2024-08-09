@@ -4,11 +4,11 @@ import { AppScreenType } from "src/types/Screen";
 export interface AppSuggestionData {
   feedbacks: string[];
   grade: {
-    contentGrade: number;
-    fontGrade: number;
+    contentGrade?: number;
+    fontGrade?: number;
     overall: number;
-    paletteGrade: number;
-    syntaxAndCorrectness: string;
+    paletteGrade?: number;
+    syntaxAndCorrectness?: string;
   };
   recommendations: string[];
 }

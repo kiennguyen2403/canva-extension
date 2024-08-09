@@ -45,7 +45,6 @@ export const AppLayout = ({ children }: { children?: ReactElement }) => {
             "Content-Type": "multipart/form-data",
           },
         });
-        console.log(result);
         setData(result.data as unknown as AppContextData);
         setScreen(AppScreenType.FullSuggestionScreen);
       }

@@ -24,7 +24,6 @@ export const FullSuggestionScreen = () => {
             data={data.recommendations.map((recommendation) => ({
               suggestion: recommendation,
               type: SuggestionType.General,
-              errors: [],
             }))}
             title="Suggestions on full design"
           />

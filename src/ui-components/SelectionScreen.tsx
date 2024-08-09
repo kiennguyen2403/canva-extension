@@ -109,7 +109,6 @@ export const SelectionScreen = () => {
       }
 
       /** Use convex to generate instant suggestions */
-      console.log("call backend");
       const generatedSuggestions = await generateSuggestions({
         designs: convertTextAnalysisDataType(analysisData),
       });
@@ -153,7 +152,7 @@ export const SelectionScreen = () => {
   ) : (
     <SuggestionTabContainer
       allElement={
-        <Accordion defaultExpanded>
+        <Accordion>
           <AccordionItem title="Wording suggestion">
             {suggestions.length === 0 ? (
               noSelectionText

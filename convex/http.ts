@@ -16,7 +16,6 @@ http.route({
       const suggestions: Suggestion[] = [];
       const formData = await request.formData();
       const blob = formData.get("file") as Blob;
-      console.log(blob);
       const design: Design = JSON.parse(formData.get("design") as string);
       const components = design
         ? design.components.map((component) => {

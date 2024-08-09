@@ -49,6 +49,5 @@ export const convertTextAnalysisDataType = (data: TextAnalysisData[]): DesignInp
       return [...result, ...components];
     }, []),
   };
-  console.log(res);
   return res;
 };

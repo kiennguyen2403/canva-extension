@@ -8,9 +8,11 @@ import {
   Avatar,
   Column,
   TypographyCard,
+  Scrollable,
 } from "@canva/app-ui-kit";
 import React, { useEffect, useState } from "react";
 import { SuggestionType, type Suggestion } from "src/types/Suggestion";
+import styles from "../../styles/components.css";
 
 export const SuggestionTab = ({
   data,
@@ -58,41 +60,59 @@ export const SuggestionTab = ({
           </Box>
         </Column>
         <Column>
-          <Avatar name={selectableData.length.toString()} backgroundColor="#34BA96" />
+          <Avatar
+            name={selectableData.length.toString().split("").join(" ")}
+            backgroundColor="#34BA96"
+          />
         </Column>
       </Columns>
-      {selectableData &&
-        selectableData.map(({ selected, suggestion, suggested, original, id }, index) => {
-          return isSelectable ? (
-            <Pill
-              onClick={() => {
-                const newSelectedData = [...selectableData];
-                newSelectedData[index].selected = !selected;
-                setSelectedData(newSelectedData);
-                if (action && suggested && original) {
-                  action({
-                    id,
-                    suggested: suggested.rawFullText,
-                    original: original.rawFullText,
-                  });
-                }
-              }}
-              text={suggestion}
-              selected={selected}
-              end={selected && <CheckIcon />}
-              truncateText={true}
-            />
-          ) : (
-            <TypographyCard
-              ariaLabel="Copy text"
-              onClick={() => {
-                navigator.clipboard.writeText(suggestion);
-              }}
-            >
-              <Text>{suggestion}</Text>
-            </TypographyCard>
-          );
-        })}
+      <Box padding="1u" className={styles.scrollableContainer}>
+        <Scrollable
+          indicator={{
+            background: "canvas",
+          }}
+        >
+          <Rows spacing="2u">
+            {selectableData &&
+              selectableData.map(({ selected, suggestion, suggested, original, id }, index) => {
+                return isSelectable ? (
+                  <Pill
+                    key={id}
+                    onClick={() => {
+                      const newSelectedData = [...selectableData];
+                      newSelectedData[index].selected = !selected;
+                      setSelectedData(newSelectedData);
+                      if (action && suggested && original) {
+                        action({
+                          id,
+                          suggested: suggested.rawFullText,
+                          original: original.rawFullText,
+                        });
+                      }
+                    }}
+                    text={suggestion}
+                    selected={selected}
+                    end={selected && <CheckIcon />}
+                    truncateText={true}
+                  />
+                ) : (
+                  <TypographyCard
+                    key={id}
+                    ariaLabel="Copy text"
+                    onClick={() => {
+                      navigator.clipboard.writeText(suggestion);
+                      const newSelectedData = [...selectableData];
+                      newSelectedData[index].selected = !selected;
+                      setSelectedData(newSelectedData);
+                    }}
+                  >
+                    <Text lineClamp={selected ? 0 : 1}>{suggestion}</Text>
+                  </TypographyCard>
+                );
+              })}
+          </Rows>
+        </Scrollable>
+      </Box>
     </Rows>
   );
 };
