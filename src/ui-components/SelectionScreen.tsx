@@ -1,15 +1,4 @@
-import {
-  Accordion,
-  AccordionItem,
-  Box,
-  ImageCard,
-  LoadingIndicator,
-  Masonry,
-  MasonryItem,
-  Rows,
-  Swatch,
-  Text,
-} from "@canva/app-ui-kit";
+import { Accordion, AccordionItem, Box, LoadingIndicator, Swatch, Text } from "@canva/app-ui-kit";
 import type { SelectionEvent } from "@canva/preview/design";
 import { selection } from "@canva/preview/design";
 import { useAction } from "convex/react";
@@ -20,13 +9,15 @@ import { convertSuggestionType } from "src/utils/convertSuggestionType";
 import { convertTextAnalysisDataType } from "src/utils/convertTextAnalysisDataType";
 import { mapTextRegionToTextData } from "src/utils/mapTextRegionToTextData";
 import { api } from "../../convex/_generated/api";
-import { Suggestion } from "../types/Suggestion";
+import { Suggestion, SuggestionType } from "../types/Suggestion";
 import { SuggestionTab } from "./SuggestionTab";
 import { SuggestionTabContainer } from "./SuggestionTabContainer";
+import { SuggestionTabMedia } from "./SuggestionTabMedia";
+import { SuggestionTabPalette } from "./SuggestionTabPalette";
 
 export const SelectionScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<Suggestion[] | undefined>(undefined);
   /**
    * Richtext is currently in preview, may have huge changes later
    * Plain text API is currently commented out and Richtext is used
@@ -122,7 +113,7 @@ export const SelectionScreen = () => {
     getAnalysisData();
     if (!currentRichTextSelection || currentRichTextSelection.count === 0) {
       setSelectionCount(0);
-      setSuggestions([]);
+      setSuggestions(undefined);
     }
   }, [currentRichTextSelection]);
 
@@ -133,17 +124,28 @@ export const SelectionScreen = () => {
     </Box>
   );
 
-  const CopySwatch = ({ color, label }: { color: string; label?: string }) => (
-    <Swatch
-      fill={[color]}
-      onClick={() => {
-        navigator.clipboard.writeText(color);
-      }}
-      size="xsmall"
-      variant="solid"
-      tooltipLabel={label}
-    />
+  const wordingSuggestions = suggestions?.filter(
+    (suggestion) => suggestion.type !== SuggestionType.Palette
   );
+
+  const paletteSuggestions = suggestions?.filter(
+    (suggestion) => suggestion.type === SuggestionType.Palette
+  );
+
+  const textElement =
+    wordingSuggestions === undefined ? (
+      noSelectionBox
+    ) : (
+      <SuggestionTab data={wordingSuggestions} action={replaceCurrentTextSelection} />
+    );
+
+  const mediaElement = suggestions === undefined ? noSelectionBox : <SuggestionTabMedia />;
+  const colorElement =
+    paletteSuggestions === undefined ? (
+      noSelectionBox
+    ) : (
+      <SuggestionTabPalette suggestions={paletteSuggestions} />
+    );
 
   return isLoading ? (
     <Box padding="12u">
@@ -153,152 +155,14 @@ export const SelectionScreen = () => {
     <SuggestionTabContainer
       allElement={
         <Accordion>
-          <AccordionItem title="Wording suggestion">
-            {suggestions.length === 0 ? (
-              noSelectionText
-            ) : (
-              <SuggestionTab data={suggestions} action={replaceCurrentTextSelection} />
-            )}
-          </AccordionItem>
-          <AccordionItem title="Media suggestion">
-            <Text>Media suggestions</Text>
-          </AccordionItem>
-          <AccordionItem title="Color suggestion">
-            <Text>Palette suggestions</Text>
-          </AccordionItem>
+          <AccordionItem title="Wording suggestion">{textElement}</AccordionItem>
+          <AccordionItem title="Media suggestion">{mediaElement}</AccordionItem>
+          <AccordionItem title="Color suggestion">{colorElement}</AccordionItem>
         </Accordion>
       }
-      textElement={
-        suggestions.length === 0 ? (
-          noSelectionBox
-        ) : (
-          <SuggestionTab data={suggestions} action={replaceCurrentTextSelection} />
-        )
-      }
-      mediaElement={
-        <>
-          <Box paddingBottom="2u">
-            <Text alignment="start" capitalization="default" size="medium" variant="bold">
-              Suggested images for your design
-            </Text>
-          </Box>
-          <Masonry targetRowHeightPx={100}>
-            <MasonryItem targetHeightPx={100} targetWidthPx={106}>
-              <ImageCard
-                ariaLabel="Add image to design"
-                onClick={() => {}}
-                thumbnailUrl="https://picsum.photos/106/100"
-              />
-            </MasonryItem>
-            <MasonryItem targetHeightPx={100} targetWidthPx={54}>
-              <ImageCard
-                ariaLabel="Add image to design"
-                onClick={() => {}}
-                thumbnailUrl="https://picsum.photos/54/100"
-              />
-            </MasonryItem>
-            <MasonryItem targetHeightPx={100} targetWidthPx={185}>
-              <ImageCard
-                ariaLabel="Add image to design"
-                onClick={() => {}}
-                thumbnailUrl="https://picsum.photos/185/100"
-              />
-            </MasonryItem>
-            <MasonryItem targetHeightPx={100} targetWidthPx={167}>
-              <ImageCard
-                ariaLabel="Add image to design"
-                onClick={() => {}}
-                thumbnailUrl="https://picsum.photos/167/100"
-              />
-            </MasonryItem>
-            <MasonryItem targetHeightPx={100} targetWidthPx={114}>
-              <ImageCard
-                ariaLabel="Add image to design"
-                onClick={() => {}}
-                thumbnailUrl="https://picsum.photos/114/100"
-              />
-            </MasonryItem>
-            <MasonryItem targetHeightPx={100} targetWidthPx={133}>
-              <ImageCard
-                ariaLabel="Add image to design"
-                onClick={() => {}}
-                thumbnailUrl="https://picsum.photos/133/100"
-              />
-            </MasonryItem>
-            <MasonryItem targetHeightPx={100} targetWidthPx={122}>
-              <ImageCard
-                ariaLabel="Add image to design"
-                onClick={() => {}}
-                thumbnailUrl="https://picsum.photos/122/100"
-              />
-            </MasonryItem>
-            <MasonryItem targetHeightPx={100} targetWidthPx={125}>
-              <ImageCard
-                ariaLabel="Add image to design"
-                onClick={() => {}}
-                thumbnailUrl="https://picsum.photos/125/100"
-              />
-            </MasonryItem>
-            <MasonryItem targetHeightPx={100} targetWidthPx={188}>
-              <ImageCard
-                ariaLabel="Add image to design"
-                onClick={() => {}}
-                thumbnailUrl="https://picsum.photos/188/100"
-              />
-            </MasonryItem>
-            <MasonryItem targetHeightPx={100} targetWidthPx={95}>
-              <ImageCard
-                ariaLabel="Add image to design"
-                onClick={() => {}}
-                thumbnailUrl="https://picsum.photos/95/100"
-              />
-            </MasonryItem>
-          </Masonry>
-        </>
-      }
-      colorElement={
-        <>
-          <Box paddingBottom="2u">
-            <Text alignment="start" capitalization="default" size="medium" variant="bold">
-              Suggested color palette for your design
-            </Text>
-          </Box>
-          <Rows spacing="2u">
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "1rem",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text>Rosettes and Cream</Text>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                <CopySwatch color="#EF7C8E" label="Hot Pink" />
-                <CopySwatch color="#FAE8E0" label="Cream" />
-                <CopySwatch color="#B6E2D3" label="Spearmint" />
-                <CopySwatch color="#D8A7B1" label="Rosewater" />
-              </div>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "1rem",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text>Summer Splash</Text>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                <CopySwatch color="#05445E" label="Navy Blue" />
-                <CopySwatch color="#189AB4" label="Blue Grotto" />
-                <CopySwatch color="#75E6DA" label="Blue Green" />
-                <CopySwatch color="#D4F1F4" label="Baby Blue" />
-              </div>
-            </div>
-          </Rows>
-        </>
-      }
+      textElement={textElement}
+      mediaElement={mediaElement}
+      colorElement={colorElement}
     />
   );
 };
