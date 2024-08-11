@@ -1,9 +1,24 @@
+"use client";
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import axios from "axios";
 import { Design, ImageModelResponse, Suggestion } from "./type/types";
 import { geminiHelper } from "./helpers/GeminiHelper";
+
+function base64ToBlob(base64: string, type = 'application/octet-stream') {
+  // Remove the base64 prefix (if present)
+  console.log(base64);
+  const byteString = atob(base64.split(',')[1]);
+  const arrayBuffer = new Uint8Array(byteString.length);
+
+  for (let i = 0; i < byteString.length; i++) {
+    arrayBuffer[i] = byteString.charCodeAt(i);
+  }
+  console.log(arrayBuffer);
+  return new Blob([arrayBuffer], { type: type });
+}
+
 
 const http = httpRouter();
 
@@ -126,9 +141,21 @@ http.route({
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     const prompts = await request.json();
-    const response = await axios.get(process.env.TEMPLATES_API!, prompts);
-    
-    return new Response("Hello", {
+    const res: string= await axios.post(process.env.TEMPLATE_API!, 
+      prompts,
+    );
+    const response = JSON.parse(res);
+    console.log(response.prototype);
+
+    const prototype = base64ToBlob(response.prototype, 'image/png');
+    console.log(prototype);
+    const storageId = await ctx.storage.store(prototype);
+    const received = response.data["received_data"];
+    const result =  {
+      storageId,
+      received
+    }
+    return new Response(JSON.stringify(result), {
       status: 200,
       statusText: "OK",
       headers: new Headers({
