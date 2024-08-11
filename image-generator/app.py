@@ -15,6 +15,7 @@ def process_inference_result(image_path, inference_data):
     # Load the original image
     poster_image = Image.open(image_path)
     # Iterate over detected components
+    components = []
     for component in inference_data['predictions']:
         # Get bounding box coordinates
         x = component['x']
@@ -40,16 +41,34 @@ def process_inference_result(image_path, inference_data):
             # Extract text using OCR
             extracted_text = pytesseract.image_to_string(cropped_image)
             print(f"Extracted Text from {component['class']}: {extracted_text}")
-            return extracted_text
             # Send text to the backend or process it further
             # Example: send_text_to_backend(extracted_text)
+            components.append({
+                "class": component['class'],
+                "text": extracted_text,
+                "x": x,
+                "y": y,
+                "width": width,
+                "height": height
+            })
         
         else:
             # Save or send the cropped image
+            buffered = io.BytesIO()
             image_name = f"{component['class']}_{component['detection_id']}.jpg"
-            cropped_image.save(image_name)
+            cropped_image.save(buffered, format="PNG")
             print(f"Cropped image saved as '{image_name}'")
-            return image_name
+            components.append({
+                "class": component['class'],
+                "image": image_name,
+                "data": base64.b64encode(buffered.getvalue()).decode("utf-8"),
+                "x": x,
+                "y": y,
+                "width": width,
+                "height": height
+            })
+    return components
+        
 
 app = Flask(__name__)
 
@@ -114,4 +133,4 @@ def submit_data():
 
 # Run the server
 if __name__ == '__main__':
-    app.run(host= "0.0.00",debug=True, port=80)
+    app.run(host= "0.0.0.0",debug=True, port=80)

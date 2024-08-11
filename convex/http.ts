@@ -3,22 +3,9 @@ import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import axios from "axios";
+import b64toBlob from 'b64-to-blob';
 import { Design, ImageModelResponse, Suggestion } from "./type/types";
 import { geminiHelper } from "./helpers/GeminiHelper";
-
-function base64ToBlob(base64: string, type = 'application/octet-stream') {
-  // Remove the base64 prefix (if present)
-  console.log(base64);
-  const byteString = atob(base64.split(',')[1]);
-  const arrayBuffer = new Uint8Array(byteString.length);
-
-  for (let i = 0; i < byteString.length; i++) {
-    arrayBuffer[i] = byteString.charCodeAt(i);
-  }
-  console.log(arrayBuffer);
-  return new Blob([arrayBuffer], { type: type });
-}
-
 
 const http = httpRouter();
 
@@ -28,23 +15,21 @@ http.route({
   handler: httpAction(async (ctx, request) => {
     try {
       console.log("Request received");
-      const suggestions: Suggestion[] = [];
       const formData = await request.formData();
       const blob = formData.get("file") as Blob;
-      console.log(blob);
       const design: Design = JSON.parse(formData.get("design") as string);
       const components = design
         ? design.components.map((component) => {
-            return {
-              name: component.name,
-              props: Object.entries(component.props).map(([key, value]) => {
-                return {
-                  key,
-                  value,
-                };
-              }),
-            };
-          })
+          return {
+            name: component.name,
+            props: Object.entries(component.props).map(([key, value]) => {
+              return {
+                key,
+                value,
+              };
+            }),
+          };
+        })
         : [];
       const designObject = {
         naming: design?.naming || "",
@@ -70,6 +55,7 @@ http.route({
             Vary: "origin",
           }),
         });
+
       await ctx.runMutation(internal.images.saveImageUrl, { url, storageId });
       const response: any = await axios({
         method: "POST",
@@ -140,29 +126,49 @@ http.route({
   path: "/api/templates",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
-    const prompts = await request.json();
-    const res: string= await axios.post(process.env.TEMPLATE_API!, 
-      prompts,
-    );
-    const response = JSON.parse(res);
-    console.log(response.prototype);
+    try {
+      const prompts = await request.json();
+      const response = await axios.post(process.env.TEMPLATE_API!,
+        prompts,
+      );
 
-    const prototype = base64ToBlob(response.prototype, 'image/png');
-    console.log(prototype);
-    const storageId = await ctx.storage.store(prototype);
-    const received = response.data["received_data"];
-    const result =  {
-      storageId,
-      received
+      const prototype = b64toBlob(response.data.prototype, 'image/png');
+      const storageId = await ctx.storage.store(prototype!);
+      const url = await ctx.storage.getUrl(storageId);
+      const received = await Promise.all(
+        response.data["received_data"].map(async (data: any) => {
+          if (!["Number", "Title", "Description", "Name"].includes(data["class"])) {
+            const blob = b64toBlob(data["data"] as string, 'image/png');
+            const storageId = await ctx.storage.store(blob);
+            const url = await ctx.storage.getUrl(storageId);
+            data["data"] = url;
+          }
+          return data;
+        })
+      );
+      
+      const result = {
+        url,
+        received
+      }
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        statusText: "OK",
+        headers: new Headers({
+          "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+          Vary: "origin",
+        }),
+      });
+    } catch (e) {
+      console.error(e);
+      return new Response("Error", {
+        status: 500,
+        headers: new Headers({
+          "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+          Vary: "origin",
+        }),
+      });
     }
-    return new Response(JSON.stringify(result), {
-      status: 200,
-      statusText: "OK",
-      headers: new Headers({
-        "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
-        Vary: "origin",
-      }),
-    });
   }),
 });
 
