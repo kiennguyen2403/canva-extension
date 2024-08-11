@@ -14,10 +14,14 @@ import { SuggestionTab } from "./SuggestionTab";
 import { SuggestionTabContainer } from "./SuggestionTabContainer";
 import { SuggestionTabMedia } from "./SuggestionTabMedia";
 import { SuggestionTabPalette } from "./SuggestionTabPalette";
+import axios from "axios";
+import { DesignInputName } from "src/types/Convex";
 
 export const SelectionScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<Suggestion[] | undefined>(undefined);
+  const [suggestedImageUrl, setSuggestedImageUrl] = useState("");
+
   /**
    * Richtext is currently in preview, may have huge changes later
    * Plain text API is currently commented out and Richtext is used
@@ -100,12 +104,40 @@ export const SelectionScreen = () => {
       }
 
       /** Use convex to generate instant suggestions */
+      const designInput = convertTextAnalysisDataType(analysisData);
       const generatedSuggestions = await generateSuggestions({
-        designs: convertTextAnalysisDataType(analysisData),
+        designs: designInput,
       });
 
       setSuggestions(convertSuggestionType(generatedSuggestions));
       setIsLoading(false);
+
+      /** Use convex to generate image based on design text */
+      const convexDeploymentUrl = process.env.CONVEX_URL;
+      const convexSiteUrl =
+        convexDeploymentUrl && convexDeploymentUrl.endsWith(".cloud")
+          ? convexDeploymentUrl.substring(0, convexDeploymentUrl.length - ".cloud".length) + ".site"
+          : convexDeploymentUrl;
+
+      const prompt = `an image relating to these keywords: ${designInput.components
+        .filter(({ name }) => name === DesignInputName.Text)
+        .map(({ props }) => (props.length === 1 && props[0].key === "text" ? props[0].value : ""))
+        .toString()}`;
+
+      const result = await axios.post(
+        `${convexSiteUrl}/api/templates`,
+        {
+          prompt: prompt,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (result.status === 200) {
+        setSuggestedImageUrl(result.data.url);
+      }
     }
   };
 
@@ -139,7 +171,8 @@ export const SelectionScreen = () => {
       <SuggestionTab data={wordingSuggestions} action={replaceCurrentTextSelection} />
     );
 
-  const mediaElement = suggestions === undefined ? noSelectionBox : <SuggestionTabMedia />;
+  const mediaElement =
+    suggestions === undefined ? noSelectionBox : <SuggestionTabMedia url={suggestedImageUrl} />;
   const colorElement =
     paletteSuggestions === undefined ? (
       noSelectionBox

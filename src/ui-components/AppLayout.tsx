@@ -49,7 +49,7 @@ export const AppLayout = ({ children }: { children?: ReactElement }) => {
         setScreen(AppScreenType.FullSuggestionScreen);
       }
     } catch (error) {
-      console.log(error);
+      alert(error);
       setScreen(AppScreenType.SelectionSuggestionScreen);
     } finally {
       setExportingState("idle");

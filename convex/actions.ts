@@ -77,8 +77,6 @@ export const generateSuggestions = action({
         });
       });
 
-      console.log(`palette: ${paletteValidation}`);
-
       const wordingValidation: string | null = await ctx.runAction(
         internal.content.wordingValidation,
         { wording: content }
@@ -92,8 +90,6 @@ export const generateSuggestions = action({
         });
       });
 
-      console.log(`wording: ${wordingValidation}`);
-
       const fontValidation: string | null = await ctx.runAction(internal.font.fontValidation, {
         font: fonts,
       });
@@ -105,8 +101,6 @@ export const generateSuggestions = action({
           content: p,
         });
       });
-
-      console.log(`font: ${fontValidation}`);
 
       if (suggestions.length === 0) {
         suggestions.push({

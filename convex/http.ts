@@ -3,7 +3,7 @@ import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { api, internal } from "./_generated/api";
 import axios from "axios";
-import b64toBlob from 'b64-to-blob';
+import b64toBlob from "b64-to-blob";
 import { Design, ImageModelResponse, Suggestion } from "./type/types";
 import { geminiHelper } from "./helpers/GeminiHelper";
 
@@ -20,16 +20,16 @@ http.route({
       const design: Design = JSON.parse(formData.get("design") as string);
       const components = design
         ? design.components.map((component) => {
-          return {
-            name: component.name,
-            props: Object.entries(component.props).map(([key, value]) => {
-              return {
-                key,
-                value,
-              };
-            }),
-          };
-        })
+            return {
+              name: component.name,
+              props: Object.entries(component.props).map(([key, value]) => {
+                return {
+                  key,
+                  value,
+                };
+              }),
+            };
+          })
         : [];
       const designObject = {
         naming: design?.naming || "",
@@ -127,18 +127,17 @@ http.route({
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     try {
+      console.log("Request received");
       const prompts = await request.json();
-      const response = await axios.post(process.env.TEMPLATE_API!,
-        prompts,
-      );
+      const response = await axios.post(process.env.TEMPLATE_API!, prompts);
 
-      const prototype = b64toBlob(response.data.prototype, 'image/png');
+      const prototype = b64toBlob(response.data.prototype, "image/png");
       const storageId = await ctx.storage.store(prototype!);
       const url = await ctx.storage.getUrl(storageId);
       const received = await Promise.all(
         response.data["received_data"].map(async (data: any) => {
           if (!["Number", "Title", "Description", "Name"].includes(data["class"])) {
-            const blob = b64toBlob(data["data"] as string, 'image/png');
+            const blob = b64toBlob(data["data"] as string, "image/png");
             const storageId = await ctx.storage.store(blob);
             const url = await ctx.storage.getUrl(storageId);
             data["data"] = url;
@@ -146,16 +145,16 @@ http.route({
           return data;
         })
       );
-      
+
       const result = {
         url,
-        received
-      }
+        received,
+      };
       return new Response(JSON.stringify(result), {
         status: 200,
         statusText: "OK",
         headers: new Headers({
-          "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+          "Access-Control-Allow-Origin": process.env.CANVA_APP_ORIGIN!,
           Vary: "origin",
         }),
       });
@@ -164,10 +163,37 @@ http.route({
       return new Response("Error", {
         status: 500,
         headers: new Headers({
-          "Access-Control-Allow-Origin": process.env.CLIENT_ORIGIN!,
+          "Access-Control-Allow-Origin": process.env.CANVA_APP_ORIGIN!,
           Vary: "origin",
         }),
       });
+    }
+  }),
+});
+
+http.route({
+  path: "/api/templates",
+  method: "OPTIONS",
+  handler: httpAction(async (_, request) => {
+    // Make sure the necessary headers are present
+    // for this to be a valid pre-flight request
+    const headers = request.headers;
+    if (
+      headers.get("Origin") !== null &&
+      headers.get("Access-Control-Request-Method") !== null &&
+      headers.get("Access-Control-Request-Headers") !== null
+    ) {
+      return new Response(null, {
+        headers: new Headers({
+          // e.g. https://mywebsite.com, configured on your Convex dashboard
+          "Access-Control-Allow-Origin": process.env.CANVA_APP_ORIGIN!,
+          "Access-Control-Allow-Methods": "POST",
+          "Access-Control-Allow-Headers": "Content-Type, Digest",
+          "Access-Control-Max-Age": "86400",
+        }),
+      });
+    } else {
+      return new Response();
     }
   }),
 });

@@ -13,7 +13,6 @@ export const SuggestionTabPalette = ({ suggestions }: { suggestions: Suggestion[
   });
 
   const queryPalettes = useQuery(api.palettes.queryPalettes, { palette: colors });
-  console.log(queryPalettes);
   return (
     <>
       <Box paddingBottom="2u">
@@ -22,7 +21,7 @@ export const SuggestionTabPalette = ({ suggestions }: { suggestions: Suggestion[
         </Text>
       </Box>
       <Rows spacing="2u">
-        {queryPalettes?.map(({ missing, name, palette }) => (
+        {queryPalettes?.map(({ missing, name, palette }, id) => (
           <div
             style={{
               display: "flex",
@@ -30,11 +29,12 @@ export const SuggestionTabPalette = ({ suggestions }: { suggestions: Suggestion[
               gap: "1rem",
               justifyContent: "space-between",
             }}
+            key={id}
           >
             <Text>{name}</Text>
             <div style={{ display: "flex", gap: "0.5rem" }}>
-              {palette?.map((color) => (
-                <CopySwatch color={color} />
+              {palette?.map((color, id) => (
+                <CopySwatch color={color} key={id} />
               ))}
             </div>
           </div>

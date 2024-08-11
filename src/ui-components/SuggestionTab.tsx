@@ -53,10 +53,12 @@ export const SuggestionTab = ({
 
   return (
     <Rows spacing="2u">
-      <Columns spacing="1u">
+      <Columns spacing="1u" alignY="center">
         <Column width="4/5">
           <Box>
-            <Text>{title || "Suggestions regarding text grammar, fonts and styles"}</Text>
+            <Text alignment="start" capitalization="default" size="medium" variant="bold">
+              {title || "Suggestions regarding text grammar, fonts and styles"}
+            </Text>
           </Box>
         </Column>
         <Column>
