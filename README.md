@@ -1,7 +1,5 @@
 # Project Story: AviMate - Define Perfection
 
-![AviMate Logo](https://via.placeholder.com/150) <!-- Replace with your project logo -->
-
 ## Inspiration
 As non-professional designers, my team and I faced significant challenges in transforming our ideas into tangible sketches. We struggled with:
 
