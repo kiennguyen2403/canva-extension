@@ -30,10 +30,6 @@ export const SuggestionTabMedia = ({
   const [prompt, setPrompt] = useState("");
   const [urls, setUrls] = useState<string[]>([]);
 
-  const fakeRequest = async (): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 6000));
-  };
-
   const handleClick = async (url) => {
     const imageAsset = await upload({
       mimeType: "image/png",
