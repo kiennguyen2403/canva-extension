@@ -1,5 +1,12 @@
 import React, { ReactElement } from "react";
-import { Tabs, Tab, TabList, TabPanel, TabPanels, Rows } from "@canva/app-ui-kit";
+import {
+  Tabs,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Rows,
+} from "@canva/app-ui-kit";
 import styles from "../../styles/components.css";
 
 export const SuggestionTabContainer = ({
@@ -20,14 +27,14 @@ export const SuggestionTabContainer = ({
           <TabList>
             <Tab id="all">All</Tab>
             <Tab id="text">Wording</Tab>
-            <Tab id="media">Media</Tab>
             <Tab id="color">Color</Tab>
+            <Tab id="media">Media</Tab>
           </TabList>
           <TabPanels>
             <TabPanel id="all">{allElement}</TabPanel>
             <TabPanel id="text">{textElement}</TabPanel>
-            <TabPanel id="media">{mediaElement}</TabPanel>
             <TabPanel id="color">{colorElement}</TabPanel>
+            <TabPanel id="media">{mediaElement}</TabPanel>
           </TabPanels>
         </Rows>
       </Tabs>

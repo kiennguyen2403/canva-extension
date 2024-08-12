@@ -12,7 +12,6 @@ import {
 import { AppContext } from "./AppContext";
 import { SuggestionTab } from "./SuggestionTab";
 import { SuggestionType } from "src/types/Suggestion";
-import styles from "../../styles/components.css";
 
 export const FullSuggestionScreen = () => {
   const { data } = useContext(AppContext);
@@ -39,7 +38,9 @@ export const FullSuggestionScreen = () => {
                       {data.grade.contentGrade && (
                         <Text>Content: {data.grade.contentGrade}/10</Text>
                       )}
-                      {data.grade.fontGrade && <Text>Font: {data.grade.fontGrade}/10</Text>}
+                      {data.grade.fontGrade && (
+                        <Text>Font: {data.grade.fontGrade}/10</Text>
+                      )}
                       {data.grade.paletteGrade && (
                         <Text>Palette: {data.grade.paletteGrade}/10</Text>
                       )}

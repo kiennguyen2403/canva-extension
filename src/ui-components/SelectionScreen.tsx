@@ -1,4 +1,11 @@
-import { Accordion, AccordionItem, Box, LoadingIndicator, Swatch, Text } from "@canva/app-ui-kit";
+import {
+  Accordion,
+  AccordionItem,
+  Box,
+  LoadingIndicator,
+  Swatch,
+  Text,
+} from "@canva/app-ui-kit";
 import type { SelectionEvent } from "@canva/preview/design";
 import { selection } from "@canva/preview/design";
 import { useAction } from "convex/react";
@@ -14,14 +21,18 @@ import { SuggestionTab } from "./SuggestionTab";
 import { SuggestionTabContainer } from "./SuggestionTabContainer";
 import { SuggestionTabMedia } from "./SuggestionTabMedia";
 import { SuggestionTabPalette } from "./SuggestionTabPalette";
-import axios from "axios";
 import { DesignInputName } from "src/types/Convex";
+import { LoadingComponent } from "./LoadingComponent";
+import styles from "../../styles/components.css";
 
 export const SelectionScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [suggestions, setSuggestions] = useState<Suggestion[] | undefined>(undefined);
-  const [suggestedImageUrl, setSuggestedImageUrl] = useState("");
-
+  const [suggestions, setSuggestions] = useState<Suggestion[] | undefined>(
+    undefined
+  );
+  const [designPrompt, setDesignPrompt] = useState<string | undefined>(
+    undefined
+  );
   /**
    * Richtext is currently in preview, may have huge changes later
    * Plain text API is currently commented out and Richtext is used
@@ -62,7 +73,10 @@ export const SelectionScreen = () => {
       const content = draft.contents[id];
       const contentText = await content.readPlaintext();
       if (contentText === original) {
-        content.replaceText({ index: 0, length: contentText.length }, suggested);
+        content.replaceText(
+          { index: 0, length: contentText.length },
+          suggested
+        );
       } else if (contentText === suggested) {
         content.replaceText({ index: 0, length: contentText.length }, original);
       }
@@ -98,7 +112,9 @@ export const SelectionScreen = () => {
         datum.rawFullText = fullText;
 
         for (let i = 0; i < regions.length; i++) {
-          datum.styles.push(await mapTextRegionToTextData({ id: i, data: regions[i] }));
+          datum.styles.push(
+            await mapTextRegionToTextData({ id: i, data: regions[i] })
+          );
         }
         analysisData.push(datum);
       }
@@ -112,32 +128,14 @@ export const SelectionScreen = () => {
       setSuggestions(convertSuggestionType(generatedSuggestions));
       setIsLoading(false);
 
-      /** Use convex to generate image based on design text */
-      const convexDeploymentUrl = process.env.CONVEX_URL;
-      const convexSiteUrl =
-        convexDeploymentUrl && convexDeploymentUrl.endsWith(".cloud")
-          ? convexDeploymentUrl.substring(0, convexDeploymentUrl.length - ".cloud".length) + ".site"
-          : convexDeploymentUrl;
-
       const prompt = `an image relating to these keywords: ${designInput.components
         .filter(({ name }) => name === DesignInputName.Text)
-        .map(({ props }) => (props.length === 1 && props[0].key === "text" ? props[0].value : ""))
+        .map(({ props }) =>
+          props.length === 1 && props[0].key === "text" ? props[0].value : ""
+        )
         .toString()}`;
 
-      const result = await axios.post(
-        `${convexSiteUrl}/api/templates`,
-        {
-          prompt: prompt,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (result.status === 200) {
-        setSuggestedImageUrl(result.data.url);
-      }
+      setDesignPrompt(prompt);
     }
   };
 
@@ -151,7 +149,7 @@ export const SelectionScreen = () => {
 
   const noSelectionText = "Please make a selection on your design";
   const noSelectionBox = (
-    <Box padding="8u" height="full">
+    <Box paddingY="2u" paddingX="4u">
       <Text alignment="center">{noSelectionText}</Text>
     </Box>
   );
@@ -168,11 +166,18 @@ export const SelectionScreen = () => {
     wordingSuggestions === undefined ? (
       noSelectionBox
     ) : (
-      <SuggestionTab data={wordingSuggestions} action={replaceCurrentTextSelection} />
+      <SuggestionTab
+        data={wordingSuggestions}
+        action={replaceCurrentTextSelection}
+      />
     );
 
-  const mediaElement =
-    suggestions === undefined ? noSelectionBox : <SuggestionTabMedia url={suggestedImageUrl} />;
+  const mediaElement = (
+    <SuggestionTabMedia
+      designPrompt={designPrompt}
+      noSelectionText={suggestions === undefined ? noSelectionText : undefined}
+    />
+  );
   const colorElement =
     paletteSuggestions === undefined ? (
       noSelectionBox
@@ -181,15 +186,16 @@ export const SelectionScreen = () => {
     );
 
   return isLoading ? (
-    <Box padding="12u">
-      <LoadingIndicator size="large" />
+    <Box className={styles.fullHeight} display="flex" alignItems="center">
+      <LoadingComponent texts={["Retrieving AI suggestions"]} />
     </Box>
   ) : (
     <SuggestionTabContainer
       allElement={
         <Accordion>
-          <AccordionItem title="Wording suggestion">{textElement}</AccordionItem>
-          <AccordionItem title="Media suggestion">{mediaElement}</AccordionItem>
+          <AccordionItem title="Wording suggestion">
+            {textElement}
+          </AccordionItem>
           <AccordionItem title="Color suggestion">{colorElement}</AccordionItem>
         </Accordion>
       }

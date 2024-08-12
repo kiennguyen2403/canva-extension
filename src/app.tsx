@@ -23,7 +23,9 @@ const renderScreen = (screen: AppScreenType) => {
 };
 
 export const App = () => {
-  const [screen, setScreen] = useState<AppScreenType>(AppScreenType.SelectionSuggestionScreen);
+  const [screen, setScreen] = useState<AppScreenType>(
+    AppScreenType.SelectionSuggestionScreen
+  );
   const [data, setData] = useState<AppContextData>(undefined);
 
   return (

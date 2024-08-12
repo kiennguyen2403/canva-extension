@@ -56,7 +56,12 @@ export const SuggestionTab = ({
       <Columns spacing="1u" alignY="center">
         <Column width="4/5">
           <Box>
-            <Text alignment="start" capitalization="default" size="medium" variant="bold">
+            <Text
+              alignment="start"
+              capitalization="default"
+              size="medium"
+              variant="bold"
+            >
               {title || "Suggestions regarding text grammar, fonts and styles"}
             </Text>
           </Box>
@@ -76,42 +81,44 @@ export const SuggestionTab = ({
         >
           <Rows spacing="2u">
             {selectableData &&
-              selectableData.map(({ selected, suggestion, suggested, original, id }, index) => {
-                return isSelectable ? (
-                  <Pill
-                    key={id}
-                    onClick={() => {
-                      const newSelectedData = [...selectableData];
-                      newSelectedData[index].selected = !selected;
-                      setSelectedData(newSelectedData);
-                      if (action && suggested && original) {
-                        action({
-                          id,
-                          suggested: suggested.rawFullText,
-                          original: original.rawFullText,
-                        });
-                      }
-                    }}
-                    text={suggestion}
-                    selected={selected}
-                    end={selected && <CheckIcon />}
-                    truncateText={true}
-                  />
-                ) : (
-                  <TypographyCard
-                    key={id}
-                    ariaLabel="Copy text"
-                    onClick={() => {
-                      navigator.clipboard.writeText(suggestion);
-                      const newSelectedData = [...selectableData];
-                      newSelectedData[index].selected = !selected;
-                      setSelectedData(newSelectedData);
-                    }}
-                  >
-                    <Text lineClamp={selected ? 0 : 1}>{suggestion}</Text>
-                  </TypographyCard>
-                );
-              })}
+              selectableData.map(
+                ({ selected, suggestion, suggested, original, id }, index) => {
+                  return isSelectable ? (
+                    <Pill
+                      key={id}
+                      onClick={() => {
+                        const newSelectedData = [...selectableData];
+                        newSelectedData[index].selected = !selected;
+                        setSelectedData(newSelectedData);
+                        if (action && suggested && original) {
+                          action({
+                            id,
+                            suggested: suggested.rawFullText,
+                            original: original.rawFullText,
+                          });
+                        }
+                      }}
+                      text={suggestion}
+                      selected={selected}
+                      end={selected && <CheckIcon />}
+                      truncateText={true}
+                    />
+                  ) : (
+                    <TypographyCard
+                      key={id}
+                      ariaLabel="Copy text"
+                      onClick={() => {
+                        navigator.clipboard.writeText(suggestion);
+                        const newSelectedData = [...selectableData];
+                        newSelectedData[index].selected = !selected;
+                        setSelectedData(newSelectedData);
+                      }}
+                    >
+                      <Text lineClamp={selected ? 0 : 1}>{suggestion}</Text>
+                    </TypographyCard>
+                  );
+                }
+              )}
           </Rows>
         </Scrollable>
       </Box>

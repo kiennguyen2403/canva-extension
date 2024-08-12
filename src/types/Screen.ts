@@ -1,5 +1,5 @@
 export enum AppScreenType {
-    ExportingScreen,
-    SelectionSuggestionScreen,
-    FullSuggestionScreen,
+  ExportingScreen,
+  SelectionSuggestionScreen,
+  FullSuggestionScreen,
 }

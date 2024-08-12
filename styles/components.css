@@ -41,6 +41,84 @@
   height: 100%;
 }
 
+.nativeLink {
+  color: #8a2be2;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.nativeLink:hover {
+  color: #3d10ef;
+}
+
 .scrollContainer button {
   height: fit-content;
+}
+
+.loadingContainer {
+  display: inline-block;
+  position: relative;
+}
+
+.loadingText {
+  position: absolute;
+  letter-spacing: 2px;
+  font-family: monospace;
+  border-right: 2px solid;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.loadingContainer .loadingText:nth-of-type(1) {
+  animation: typing 2s steps(30) forwards 1s, cursor 0.4s step-end infinite alternate forwards 1s,
+    deleting 2s steps(30) forwards 7s;
+}
+
+.loadingContainer .loadingText:nth-of-type(2) {
+  animation: typing 2s steps(30) forwards 11s, cursor 0.4s step-end infinite alternate forwards 11s,
+    deleting 2s steps(30) forwards 17s;
+}
+
+.loadingContainer .loadingText:nth-of-type(3) {
+  animation: typing 2s steps(30) forwards 21s, cursor 0.4s step-end infinite alternate forwards 21s,
+    deleting 2s steps(30) forwards 27s;
+}
+
+/* cursor blinking effect */
+@keyframes cursor {
+  0% {
+    visibility: visible;
+  }
+  50% {
+    border-color: transparent;
+  }
+}
+
+/* typing effect */
+@keyframes typing {
+  0% {
+    visibility: visible;
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+/* deleting effect */
+@keyframes deleting {
+  0% {
+    visibility: visible;
+    width: 100%;
+  }
+  100% {
+    visibility: hidden;
+    width: 0;
+  }
+}
+
+.submitBtnContainer button {
+  min-height: 40px;
 }

@@ -9,8 +9,8 @@
     "start": "ts-node ./scripts/start/start.ts",
     "build": "webpack --config webpack.config.js --mode production",
     "lint:types": "tsc",
-    "format": "prettier '{examples,src,utils,scripts}/**/*.{css,ts,tsx}' --no-config --write",
-    "format:check": "prettier '{examples,src,utils,scripts}/**/*.{css,ts,tsx}' --no-config --check --ignore-path",
+    "format": "prettier \"{examples,src,utils,scripts}/**/*.{css,ts,tsx}\" --no-config --write",
+    "format:check": "prettier \"{examples,src,utils,scripts}/**/*.{css,ts,tsx}\" --no-config --check --ignore-path",
     "format:file": "prettier $1 --no-config --write",
     "test": "jest --no-cache",
     "test:watch": "jest --no-cache --watch"
@@ -35,7 +35,8 @@
     "b64-to-blob": "^1.2.19",
     "convex": "^1.12.2",
     "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react-dom": "^18.1.0",
+    "react-toastify": "^10.0.5"
   },
   "devDependencies": {
     "@ngrok/ngrok": "^1.1.0",

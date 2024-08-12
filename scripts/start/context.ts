@@ -21,7 +21,10 @@ type EnvVars = {
 export class Context {
   private readonly envVars: EnvVars;
 
-  constructor(private env: NodeJS.ProcessEnv = process.env, private readonly args: CliArgs) {
+  constructor(
+    private env: NodeJS.ProcessEnv = process.env,
+    private readonly args: CliArgs
+  ) {
     this.envVars = this.parseAndValidateEnvironmentVariables();
   }
 
@@ -69,7 +72,9 @@ export class Context {
     const frontendEntryPath = path.join(this.entryDir, "index.tsx");
 
     if (!fs.existsSync(frontendEntryPath)) {
-      throw new Error(`Entry point for frontend does not exist: ${frontendEntryPath}`);
+      throw new Error(
+        `Entry point for frontend does not exist: ${frontendEntryPath}`
+      );
     }
 
     return frontendEntryPath;
@@ -84,7 +89,11 @@ export class Context {
   }
 
   get developerBackendEntryPath(): string | undefined {
-    const developerBackendEntryPath = path.join(this.entryDir, "backend", "server.ts");
+    const developerBackendEntryPath = path.join(
+      this.entryDir,
+      "backend",
+      "server.ts"
+    );
 
     if (!fs.existsSync(developerBackendEntryPath)) {
       return undefined;
@@ -143,7 +152,9 @@ export class Context {
     } = this.env;
 
     if (!CANVA_FRONTEND_PORT) {
-      throw new Error("CANVA_FRONTEND_PORT environment variable is not defined");
+      throw new Error(
+        "CANVA_FRONTEND_PORT environment variable is not defined"
+      );
     }
 
     if (!CANVA_BACKEND_PORT) {

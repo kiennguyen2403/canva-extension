@@ -3,23 +3,39 @@ import { Box, Rows, Swatch, Text } from "@canva/app-ui-kit";
 import { Suggestion } from "../types/Suggestion";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-export const SuggestionTabPalette = ({ suggestions }: { suggestions: Suggestion[] }) => {
+export const SuggestionTabPalette = ({
+  suggestions,
+}: {
+  suggestions: Suggestion[];
+}) => {
   let colors: string[] = [];
 
   suggestions.forEach(({ suggestion }) => {
-    const currentColors = suggestion.split(" ").filter((c) => c.startsWith("#"));
+    const currentColors = suggestion
+      .split(" ")
+      .filter((c) => c.startsWith("#"));
     colors = [...colors, ...currentColors];
   });
 
-  const queryPalettes = useQuery(api.palettes.queryPalettes, { palette: colors });
+  const queryPalettes = useQuery(api.palettes.queryPalettes, {
+    palette: colors,
+  });
   return (
     <>
       <Box paddingBottom="2u">
-        <Text alignment="start" capitalization="default" size="medium" variant="bold">
+        <Text
+          alignment="start"
+          capitalization="default"
+          size="medium"
+          variant="bold"
+        >
           Suggested color palette for your design
         </Text>
       </Box>
+      <br />
       <Rows spacing="2u">
         {queryPalettes?.map(({ missing, name, palette }, id) => (
           <div
@@ -44,11 +60,18 @@ export const SuggestionTabPalette = ({ suggestions }: { suggestions: Suggestion[
   );
 };
 
-export const CopySwatch = ({ color, label }: { color: string; label?: string }) => (
+export const CopySwatch = ({
+  color,
+  label,
+}: {
+  color: string;
+  label?: string;
+}) => (
   <Swatch
     fill={[color]}
     onClick={() => {
       navigator.clipboard.writeText(color);
+      toast.success(<h5>Color copied!</h5>);
     }}
     size="xsmall"
     variant="solid"
