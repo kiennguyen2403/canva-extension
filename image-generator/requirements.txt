@@ -1,0 +1,6 @@
+Flask
+Pillow
+python-dotenv
+gradio-client
+pytesseract
+inference-sdk

@@ -7,5 +7,9 @@ yarn-error.log
 dist
 secrets.json
 **/*/db.json
-
+.env
 .env.local
+image-generator/venv
+image-generator/.env
+
+

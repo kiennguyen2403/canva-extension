@@ -1,0 +1,46 @@
+{
+  "bad_combinations": [
+    {
+      "family": "Arial",
+      "style": "italic",
+      "weight": "normal",
+      "size": 20
+    },
+    {
+      "family": "Tahoma",
+      "style": "normal",
+      "weight": "bold",
+      "size": 14
+    },
+    {
+      "family": "Helvetica",
+      "style": "italic",
+      "weight": "bold",
+      "size": 16
+    },
+    {
+      "family": "Palatino",
+      "style": "italic",
+      "weight": "normal",
+      "size": 18
+    },
+    {
+      "family": "Impact",
+      "style": "normal",
+      "weight": "bold",
+      "size": 24
+    },
+    {
+      "family": "Garamond",
+      "style": "italic",
+      "weight": "bold",
+      "size": 22
+    },
+    {
+      "family": "Lucida Console",
+      "style": "italic",
+      "weight": "normal",
+      "size": 20
+    }
+  ]
+}

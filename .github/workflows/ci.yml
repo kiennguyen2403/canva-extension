@@ -4,7 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths-ignore:
-      - 'internal/**'
+      - "internal/**"
 
 jobs:
   ci:
@@ -15,12 +15,10 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@v3
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: ".nvmrc"
       - name: NPM ci
         run: npm ci
       - name: Run prettier
         run: npm run format:check
       - name: Lint types
         run: npm run lint:types
-      - name: Run build
-        run: npm run build

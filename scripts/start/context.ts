@@ -53,9 +53,7 @@ export class Context {
   }
 
   get entryDir() {
-    const { example } = this.args;
-
-    return example ? path.join(Context.examplesDir, example) : Context.srcDir;
+    return Context.srcDir;
   }
 
   get ngrokEnabled() {
@@ -132,17 +130,7 @@ export class Context {
   }
 
   static get examples(): string[] {
-    try {
-      const files = fs.readdirSync(this.examplesDir, { withFileTypes: true });
-      const dirs = files
-        .filter((dirent) => dirent.isDirectory())
-        .map((dirent) => dirent.name);
-
-      return dirs;
-    } catch (err) {
-      console.error("Error reading directory:", err);
-      return [];
-    }
+    return [];
   }
 
   private get protocol(): "https" | "http" {

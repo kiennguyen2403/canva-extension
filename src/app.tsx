@@ -1,37 +1,36 @@
-import { Button, Rows, Text } from "@canva/app-ui-kit";
-import { addNativeElement } from "@canva/design";
 import { useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import * as React from "react";
-import styles from "styles/components.css";
+import { useState } from "react";
+import { AppLayout } from "./ui-components/AppLayout";
+import { SelectionScreen } from "./ui-components/SelectionScreen";
+import { AppScreenType } from "./types/Screen";
+import { FullSuggestionScreen } from "./ui-components/FullSuggestionScreen";
+import { ExportingScreen } from "./ui-components/ExportingScreen";
+import { AppContext, AppContextData } from "./ui-components/AppContext";
+
+const renderScreen = (screen: AppScreenType) => {
+  switch (screen) {
+    case AppScreenType.ExportingScreen:
+      return <ExportingScreen />;
+    case AppScreenType.FullSuggestionScreen:
+      return <FullSuggestionScreen />;
+    case AppScreenType.SelectionSuggestionScreen:
+      return <SelectionScreen />;
+    default:
+      return <></>;
+  }
+};
 
 export const App = () => {
-  const tasks = useQuery(api.tasks.get);
-  const onClick = async () => {
-    try {
-      await addNativeElement({
-        type: "TEXT",
-        children: ["Hello world!"],
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const [screen, setScreen] = useState<AppScreenType>(
+    AppScreenType.SelectionSuggestionScreen
+  );
+  const [data, setData] = useState<AppContextData>(undefined);
 
   return (
-    <div className={styles.scrollContainer}>
-      <Rows spacing="2u">
-        {tasks?.map(({ _id, text }) => (
-          <Text key={_id}>{text}</Text>
-        ))}
-        {/* <Text>
-          To make changes to this app, edit the <code>src/app.tsx</code> file,
-          then close and reopen the app in the editor to preview the changes.
-        </Text> */}
-        <Button variant="primary" onClick={onClick} stretch>
-          Do something cool!!!
-        </Button>
-      </Rows>
-    </div>
+    <AppContext.Provider value={{ screen, setScreen, data, setData }}>
+      <AppLayout>{renderScreen(screen)}</AppLayout>
+    </AppContext.Provider>
   );
 };
